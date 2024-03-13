@@ -1,0 +1,26 @@
+{
+  "name": "pqcbom_tool",
+  "version": "1.0.0",
+  "description": "Tool for creating (PQ)CBOMs",
+  "main": "pqcbom.js",
+  "scripts": {
+    "test": "testpqcbom"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.jyu.fi/aiqusec-quenabler/pqc-migration/cyclonedx_pqc.git"
+  },
+  "keywords": [
+    "PQC",
+    "CBOM",
+    "SBOM",
+    "cryptography",
+    "cybersecurity"
+  ],
+  "author": "Kristian Leirimaa",
+  "license": "UNLICENSED",
+  "bin" : {
+    "pqcbom" : "./pqcbom.js"
+  },
+  "type": "module"
+}
