@@ -1,0 +1,12 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "metadata": {
+    "timestamp": "2024-03-13T11:47:22.984Z",
+    "component": {
+      "type": "application",
+      "name": "PQCBOM tool",
+      "version": "0.1"
+    }
+  }
+}
