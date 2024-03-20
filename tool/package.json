@@ -1,6 +1,6 @@
 {
   "name": "pqcbom_tool",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Tool for creating (PQ)CBOMs",
   "main": "pqcbom.js",
   "scripts": {

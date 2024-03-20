@@ -6,7 +6,26 @@ import { argv } from 'node:process';
 
 let logCmdCall = new Array();
 console.log("");
-const pqcbomVersion = 0.1;
+let pqcbomVersion = '0.0.1';
+
+/** Doesn't work because of synchronous/asyncronous execution
+function getVersion(){
+    fs.readFile('package.json', 'utf-8', (err, data) => {
+        if(err) {
+            console.error('Error reading file:', err);
+            return;
+        }
+        try {
+            let pckgJsonData = JSON.parse(data);
+            console.log(pckgJsonData.version);
+            
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+        }
+    });
+
+    
+} */
 
 // Go through given arguments and save them to logCmdCall array. 
 argv.forEach((val, index) => {
