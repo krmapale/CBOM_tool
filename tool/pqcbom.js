@@ -1,64 +1,93 @@
 #! /usr/bin/env node
+'use strict'
 
 import fs from 'node:fs';
 import path from 'node:path'; 
 import { argv } from 'node:process';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
-let logCmdCall = new Array();
-console.log("");
+
+
 let pqcbomVersion = '0.0.1';
 
-/** Doesn't work because of synchronous/asyncronous execution
-function getVersion(){
-    fs.readFile('package.json', 'utf-8', (err, data) => {
-        if(err) {
-            console.error('Error reading file:', err);
-            return;
-        }
-        try {
-            let pckgJsonData = JSON.parse(data);
-            console.log(pckgJsonData.version);
-            
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-        }
-    });
 
-    
-} */
+yargs(hideBin(argv))
+    .env('PQCBOM')
+    .scriptName('pqcbom')
+    .options({
+        input: {
+            alias: 'i',
+            description: 'Input directory path',
+            requiresArg: true
+        },
+        output: {
+            alias: 'u',
+            description: 'Output file name',
+            requiresArg: true
+        },
+        git: {
+            alias: 'git',
+            description: 'Git repo',
+            requiresArg: true
+        },
+        docker: {
+            alias: 'docker',
+            description: 'Docker container',
+            requiresArg: true
+        }
+    })
+    .help()
+    .alias('help', 'h')
+    .version('version', 'Show version number', pqcbomVersion)
+    .alias('v', 'version')
+    .argv;
 
-// Go through given arguments and save them to logCmdCall array. 
-argv.forEach((val, index) => {
-    logCmdCall.push(val);
-    console.log(`${index}: ${val}`);
-    // If no path is given, scan current dir
-    if(argv.length == 2 && index == 1){
-        console.log("Scanning path: " + process.cwd());
-        scanDirectory(process.cwd());
-        createBomFile();
-    }
-    // If a single argument is given, make sure that it is of correct format and then scan that directory.
-    if(argv.length >= 3 && index == 2){ 
-        if(val.startsWith('--') | val.startsWith('-')){
-            if(val == '-h' || val == '--help'){
+/**
+const argvSpliced = argv.slice(2);
+const argvSplicedLength = argvSpliced.length;
+
+// Check for any arguments.
+if(argvSplicedLength > 0){
+    const optionIndex = 0;
+    const pathIndex = 1; 
+        // If a single argument is given and matches option for help or version, print values.
+        if(argvSplicedLength == 1){
+            if(argvSpliced[optionIndex] == '-h' || argvSpliced[optionIndex] == '--help'){
                 printManualPage();
             }
+            if(argvSpliced[optionIndex] == '-v' || argvSpliced[optionIndex] == '--v'){
+                console.log(pqcbomVersion);
+            }
         }
-        if(val == '-v' || val == '--v'){
-            console.log(pqcbomVersion);
-        }
-        if(val == '--git'){
-            //TODO
-        }
-        if(val == '--docker'){
-            //TODO
+        // If two arguments were given, check for correct options, followed by a valid directory path.
+        if(argvSplicedLength == 2){
+            if(argvSpliced == '--git'){
+                //TODO
+            }
+            if(argvSpliced == '--docker'){
+                //TODO
+            }
+            if(argvSpliced == '-i' || argvSpliced == '--i'){
+                //if(argv.length == 4)
+            }
         }
         else{
             console.log("Not a valid argument. Use argument --h to see argument options.")
         }
-    }
-});
+}
+// If no arguments were given, scan current directory.
+else {
+    console.log("Scanning path: " + process.cwd());
+    scanDirectory(process.cwd());
+    createBomFile();
+}
 
+// Go through given arguments and save them to logCmdCall array. 
+argvSpliced.forEach((val, index) => {
+    console.log(`${index}: ${val}`);
+    });
+ */
 
 /**
  * Scans files from given directory.
@@ -136,13 +165,13 @@ function createBomFile(){
 
 
 /**
- * Print manual from README.md
+ * Print manual from README.md, starting after ```text up to ```. 
  */
 function printManualPage(){
     const readmeFile = "README.md";
     fs.readFile(path.join(process.cwd(), readmeFile), 'utf-8', (err, data) => {
         if (err) throw err;
-        let splitData = data.substring(data.indexOf('Options:')-1, data.lastIndexOf('```'));
+        let splitData = data.substring(data.indexOf('```text')+1, data.lastIndexOf('```'));
         console.log(splitData);
     });
 }

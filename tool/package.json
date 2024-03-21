@@ -19,8 +19,11 @@
   ],
   "author": "Kristian Leirimaa",
   "license": "UNLICENSED",
-  "bin" : {
-    "pqcbom" : "./pqcbom.js"
+  "bin": {
+    "pqcbom": "./pqcbom.js"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "yargs": "^17.7.2"
+  }
 }
