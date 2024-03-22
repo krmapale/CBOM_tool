@@ -12,7 +12,7 @@ import { hideBin } from 'yargs/helpers';
 let pqcbomVersion = '0.0.1';
 
 
-yargs(hideBin(argv))
+const args = yargs(hideBin(argv))
     .env('PQCBOM')
     .option('i', {
         alias: 'input',
@@ -27,8 +27,8 @@ yargs(hideBin(argv))
         description: 'Docker container',
         requiresArg: true
     })
-    .option('output', {
-        alias: 'o',
+    .option('o', {
+        alias: 'output',
         description: 'Output file name',
         requiresArg: true
     })
@@ -38,6 +38,37 @@ yargs(hideBin(argv))
     .version('version', 'Show version number', pqcbomVersion)
     .alias('v', 'version')
     .argv;
+
+
+//TODO: do testing and make this a loop!
+if(args.i){
+    scanDirectory(args.i);
+    if(args.o){
+        createBomFile(args.o);
+    }
+    else {
+        createBomFile(undefined);
+    }
+}
+if(args.git){
+    scanDirectory(args.git);
+    if(args.o){
+        createBomFile(args.o);
+    }
+    else {
+        createBomFile(undefined);
+    }
+}
+if(args.docker){
+    scanDirectory(args.docker);
+    if(args.o){
+        createBomFile(args.o);
+    }
+    else {
+        createBomFile(undefined);
+    }
+}
+
 
 /**
 const argvSpliced = argv.slice(2);
@@ -83,7 +114,7 @@ else {
 argvSpliced.forEach((val, index) => {
     console.log(`${index}: ${val}`);
     });
- */
+*/
 
 /**
  * Scans files from given directory.
@@ -116,21 +147,24 @@ function scanDirectory(directoryPath) {
     });
 }
 
-/**
- * Check file type. Perform deeper scanning if type is supported.
- * @param {File name} file
- * @param {Path to located file} filePath 
- */
-function checkFileType(file, filePath){
-    
-}
+
 
 /**
  * Create bom.json file.
  */
-function createBomFile(){
+function createBomFile(filename){
 
-    const filename = "bom.json";
+    //TODO: test if this works
+    const fileNameExtension = '.json';
+    if(filename == undefined){
+        filename = "bom.json";
+    }
+    else {
+        const filenameCleaned = filename.replace(/[/\\?%*:.|"<>]/g, '-');
+        filename = filenameCleaned.concat(fileNameExtension);
+    }
+
+
     // Create JS bom-object.
     const bomObj = {
         bomFormat: "CycloneDX",
