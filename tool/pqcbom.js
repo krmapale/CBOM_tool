@@ -14,29 +14,25 @@ let pqcbomVersion = '0.0.1';
 
 yargs(hideBin(argv))
     .env('PQCBOM')
-    .scriptName('pqcbom')
-    .options({
-        input: {
-            alias: 'i',
-            description: 'Input directory path',
-            requiresArg: true
-        },
-        output: {
-            alias: 'u',
-            description: 'Output file name',
-            requiresArg: true
-        },
-        git: {
-            alias: 'git',
-            description: 'Git repo',
-            requiresArg: true
-        },
-        docker: {
-            alias: 'docker',
-            description: 'Docker container',
-            requiresArg: true
-        }
+    .option('i', {
+        alias: 'input',
+        description: 'Input directory path',
+        requiresArg: true
     })
+    .option('git', {
+        description: 'Git repo',
+        requiresArg: true
+    })
+    .option('docker', {
+        description: 'Docker container',
+        requiresArg: true
+    })
+    .option('output', {
+        alias: 'o',
+        description: 'Output file name',
+        requiresArg: true
+    })
+    .scriptName('pqcbom')
     .help()
     .alias('help', 'h')
     .version('version', 'Show version number', pqcbomVersion)
