@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-'use strict'
+'use strict';
 
 import fs from 'node:fs';
 import path from 'node:path'; 
@@ -40,35 +40,38 @@ const args = yargs(hideBin(argv))
     .argv;
 
 
+
+
+for(const property in args){
+    console.log(`${property}: ${args[property]}`);
+
+}
+
+
 //TODO: do testing and make this a loop!
 if(args.i){
     scanDirectory(args.i);
-    if(args.o){
-        createBomFile(args.o);
-    }
-    else {
-        createBomFile(undefined);
-    }
+    checkOutputFilename(args.o);
 }
 if(args.git){
     scanDirectory(args.git);
-    if(args.o){
-        createBomFile(args.o);
-    }
-    else {
-        createBomFile(undefined);
-    }
+    checkOutputFilename(args.o);
 }
 if(args.docker){
     scanDirectory(args.docker);
-    if(args.o){
+    checkOutputFilename(args.o);
+}
+
+function checkOutputFilename(outputFilename){
+    if(outputFilename){
         createBomFile(args.o);
+        console.log();
     }
     else {
         createBomFile(undefined);
+        console.log();
     }
 }
-
 
 /**
 const argvSpliced = argv.slice(2);
@@ -150,7 +153,8 @@ function scanDirectory(directoryPath) {
 
 
 /**
- * Create bom.json file.
+ * Create bom.json file. 
+ * TODO: TEST
  */
 function createBomFile(filename){
 
@@ -194,17 +198,6 @@ function createBomFile(filename){
 }
 
 
-/**
- * Print manual from README.md, starting after ```text up to ```. 
- */
-function printManualPage(){
-    const readmeFile = "README.md";
-    fs.readFile(path.join(process.cwd(), readmeFile), 'utf-8', (err, data) => {
-        if (err) throw err;
-        let splitData = data.substring(data.indexOf('```text')+1, data.lastIndexOf('```'));
-        console.log(splitData);
-    });
-}
 
 /**
  * Get timestamp for bom-file.
