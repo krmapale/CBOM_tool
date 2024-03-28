@@ -52,74 +52,11 @@ if(args.git){
 if(args.docker){
     createBomFile(args.o, args.docker);
 }
-
-
-
-
-/**
- * Scans files from given directory.
- * @param {Directory that will be scanned} directoryPath 
- */
-function scanDirectory(directoryPath, bomObj) {
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) {
-            console.error('Error reading directory:', err);
-            return;
-        }
-
-        files.forEach(file => {
-            const filePath = path.join(directoryPath, file);
-
-            fs.stat(filePath, (err, stats) => {
-                if (err) {
-                    console.error('Error retrieving file stats:', err);
-                    return;
-                }
-
-                if (stats.isDirectory()) {
-                    scanDirectory(filePath); // Recursively scan subdirectory
-                } else {
-                    console.log(filePath); // Log file path
-                    bomObj = addComponent(filePath, bomObj);
-                }
-            });
-        });
-    });
+else{
+    createBomFile(args.o, process.cwd());
 }
 
-function addComponent(filePath, bomObj){
-    const component = {
-        name: undefined,
-        type: 'cryptographic-asset',
-        bomref: undefined,
-        cryptoProperties: {
-            assetType: checkType(), //TODO: luo aliohjelma joka tarkistaa onko kyse algoritmistä, avaimesta, certistä...
-        }
-    }
 
-    switch (component.cryptoProperties.assetType){
-        case 'algorithm':
-            component.cryptoProperties.algorithmProperties = {
-                primitive: undefined, //TODO
-                parameterSetIdentifier: undefined, //TODO
-                mode: undefined,
-                executionEnvironment: undefined, //TODO
-                implemenetationPlatform: undefined, //TODO
-                certificationLevel: undefined,
-                cryptoFunctions: undefined, //TODO
-                classicalSecurityLevel: undefined, //TODO
-                nistQuantumSecurityLevel: undefined //TODO
-            }
-            break;
-        case 'certificate':
-            break;
-        case 'related-crypto-material':
-            break;
-        case 'protocol':
-            break;
-    }
-
-}
 
 /**
  * Create bom.json file. 
@@ -150,10 +87,9 @@ function createBomFile(filename, dirPath){
                 version: pqcbomVersion
             }
         },
-        components: undefined
+        components: scanDirectory(dirPath)
     }
 
-    scanDirectory(dirPath, bomObj);
     
     fs.writeFile(filename, JSON.stringify(bomObj, false, 2), (err) => {
         if (err) throw err;
@@ -169,6 +105,167 @@ function createBomFile(filename, dirPath){
     
 }
 
+
+
+
+
+/**
+ * Scans files recursively from given directory.
+ * @param {Directory that will be scanned} directoryPath 
+ */
+function scanDirectory(directoryPath) {
+    const componentArray = new Array();
+    fs.readdir(directoryPath, (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+
+        files.forEach(file => {
+            const filePath = path.join(directoryPath, file);
+
+            fs.stat(filePath, (err, stats) => {
+                if (err) {
+                    console.error('Error retrieving file stats:', err);
+                    return;
+                }
+
+                if (stats.isDirectory()) {
+                    scanDirectory(filePath); // Recursively scan subdirectory
+                } else {
+                    console.log(filePath); // Log file path
+                    // If file extension is supported..
+                    if(checkFileExtension(filePath)){
+                        // and supported cryptolibrary is found
+                        if(checkForCryptoLibrary(filePath)){
+                        // return an array of components from the source file and add them to componentArray
+                        componentArray.push(getComponents(filePath));
+                        }
+                    }
+                }
+            });
+        });
+    });
+}
+
+
+function getComponents(filePath){
+
+}
+
+/**
+ * Checks if file extension is of supported type.
+ * @param {Path to file} filePath 
+ * @returns True if file extension is supported, false if not.
+ */
+function checkFileExtension(filePath){
+    let tmpBool = false;
+    const fileExtensions = ['.js', '.py', '.cs', '.java'] //TODO: add a lot more extensions and think of a better way to store these values?
+    const fileExtension = path.extname(filePath);
+    for (const element of fileExtensions){
+        if (element == fileExtension){
+            tmpBool = true;
+        }
+    }
+    return tmpBool;
+}
+
+function checkForCryptoLibrary(filePath){
+    
+}
+
+
+/**
+ * Check file type and scan if relevant. Return 
+ * @param {Path to file} filePath 
+ * @returns 
+ */
+function checkType(filePath){
+    return 'algorithm';
+}
+
+
+function addComponent(filePath){
+    const component = {
+        name: undefined,
+        type: 'cryptographic-asset',
+        bomref: undefined,
+        properties: {
+            name: 'SrcFile',
+            value: filePath
+        },
+        cryptoProperties: {
+            assetType: checkType(filePath), //TODO: luo aliohjelma joka tarkistaa onko kyse algoritmistä, avaimesta, certistä...
+        }
+    }
+
+    switch (component.cryptoProperties.assetType){
+        case 'algorithm':
+            component.cryptoProperties.algorithmProperties = {
+                primitive: undefined, //TODO
+                parameterSetIdentifier: undefined, //TODO
+                mode: undefined,
+                executionEnvironment: undefined, //TODO
+                implemenetationPlatform: undefined, //TODO
+                certificationLevel: undefined,
+                cryptoFunctions: undefined, //TODO
+                classicalSecurityLevel: undefined, //TODO
+                nistQuantumSecurityLevel: undefined //TODO
+            }
+            break;
+        case 'certificate':
+            component.cryptoProperties.certificateProperties = {
+                subjectName:  undefined, //"CN = www.google.com",
+                issuerName: undefined, //"C = US, O = Google Trust Services LLC, CN = GTS CA 1C3",
+                notValidBefore: undefined, //"2016-11-21T08:00:00Z",
+                notValidAfter: undefined, //"2017-11-22T07:59:59Z",
+                signatureAlgorithmRef: undefined, //"crypto/algorithm/sha-512-rsa@1.2.840.113549.1.1.13",
+                subjectPublicKeyRef: undefined, //"crypto/key/rsa-2048@1.2.840.113549.1.1.1",
+                certificateFormat: undefined, //"X.509",
+                certificateExtension: undefined, //"crt"
+            }
+            break;
+        case 'related-crypto-material': 
+            component.cryptoProperties.relatedCryptoMaterialProperties = {
+                type: undefined, //"public-key",
+                id: undefined, //"2e9ef09e-dfac-4526-96b4-d02f31af1b22",
+                state: undefined, //"active",
+                size: undefined, //2048,
+                algorithmRef: undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
+                securedBy: {
+                  mechanism: undefined, //"None"
+                },
+                creationDate: undefined, //"2016-11-21T08:00:00Z",
+                activationDate: undefined, //"2016-11-21T08:20:00Z"
+            }
+            break;
+        case 'protocol':
+            component.cryptoProperties.protocolProperties = {
+                type: undefined, //"tls",
+                version: undefined, //"1.2",
+                cipherSuites: [
+                  {
+                    name: undefined, //"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+                    algorithms: [
+                        undefined, //"crypto/algorithm/ecdh-curve25519@1.3.132.1.12",
+                        undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
+                        undefined, //"crypto/algorithm/aes-128-gcm@2.16.840.1.101.3.4.1.6",
+                        undefined, //"crypto/algorithm/sha-384@2.16.840.1.101.3.4.2.9"
+                    ],
+                    identifiers: undefined, //[ "0xC0", "0x30" ]
+                  }
+                ],
+                cryptoRefArray: [
+                    undefined, //"crypto/certificate/google.com@sha256:1e15e0fbd3ce95bde5945633ae96add551341b11e5bae7bba12e98ad84a5beb4"
+                ]
+            }
+            break;
+    }
+
+
+
+    return tempBomObj;
+}
 
 
 /**
