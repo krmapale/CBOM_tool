@@ -1,15 +1,20 @@
 #! /usr/bin/env node
 'use strict';
 
+
 import fs from 'node:fs';
 import path from 'node:path'; 
 import { argv } from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
+import { sign } from 'node:crypto';
 
 
 
 let pqcbomVersion = '0.0.1';
+
+// node memo: new URL();
 
 
 const args = yargs(hideBin(argv))
@@ -134,34 +139,49 @@ function scanDirectory(directoryPath) {
                     scanDirectory(filePath); // Recursively scan subdirectory
                 } else {
                     console.log(filePath); // Log file path
+                    const fileExtension = path.extname(filePath);
                     // If file extension is supported..
-                    if(checkFileExtension(filePath)){
-                        // and supported cryptolibrary is found
-                        if(checkForCryptoLibrary(filePath)){
-                        // return an array of components from the source file and add them to componentArray
-                        componentArray.push(getComponents(filePath));
-                        }
+                    if(checkFileExtension(fileExtension)){
+                        const components = getComponents(filePath, fileExtension);
+                        components.forEach(component => {
+                            componentArray.push(component);
+                        });
                     }
                 }
             });
         });
     });
+    return componentArray;
 }
 
 
-function getComponents(filePath){
-
+function getComponents(filePath, fileExtension){
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    
+    let match;
+    if(fileExtension == '.js'){
+        //if(fileContent.match(NodeCrypto.))
+    }
+    if(fileExtension == '.py'){
+        
+    }
+    if(fileExtension == '.cs'){
+        
+    }
+    if(fileExtension == '.java'){
+        
+    }
 }
+
 
 /**
  * Checks if file extension is of supported type.
  * @param {Path to file} filePath 
  * @returns True if file extension is supported, false if not.
  */
-function checkFileExtension(filePath){
+function checkFileExtension(fileExtension){
     let tmpBool = false;
     const fileExtensions = ['.js', '.py', '.cs', '.java'] //TODO: add a lot more extensions and think of a better way to store these values?
-    const fileExtension = path.extname(filePath);
     for (const element of fileExtensions){
         if (element == fileExtension){
             tmpBool = true;
@@ -170,9 +190,6 @@ function checkFileExtension(filePath){
     return tmpBool;
 }
 
-function checkForCryptoLibrary(filePath){
-    
-}
 
 
 /**
