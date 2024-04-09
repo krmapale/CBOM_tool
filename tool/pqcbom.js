@@ -8,8 +8,6 @@ import { argv } from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
-import { sign } from 'node:crypto';
-
 
 
 let pqcbomVersion = '0.0.1';
@@ -47,7 +45,7 @@ const args = yargs(hideBin(argv))
 
 
 
-//TODO: do testing and make this a loop!
+//TODO: do testing
 if(args.i){
     createBomFile(args.o, args.i);
 }
@@ -157,10 +155,27 @@ function scanDirectory(directoryPath) {
 
 function getComponents(filePath, fileExtension){
     const fileContent = fs.readFileSync(filePath, 'utf-8');
-    
+    const nodeCryptoObj = new NodeCrypto();
+    let libFound = false;
+
     let match;
-    if(fileExtension == '.js'){
-        //if(fileContent.match(NodeCrypto.))
+    if(fileExtension == '.js' | fileExtension == '.ts'){
+        // NodeCrypto.importRegexp has an array of regexpes that match importing from Node crypto library
+        nodeCryptoObj.importRegexp.forEach((regexpItem) => {
+            // Checks if any matches on Node crypto library are found.
+            if(fileContent.match(regexpItem) != null){
+                libFound = true;
+            }
+        }); 
+        // if matches node crypto require statement
+        if(fileContent.match(nodeCryptoObj.requireRegexp)){
+            libFound = true;
+        }
+        // Note. This might cause issues if this part doesn't progress in order (top to bottom).
+        // If node library is found..
+        if(libFound){
+            //TODO: continue
+        }
     }
     if(fileExtension == '.py'){
         
