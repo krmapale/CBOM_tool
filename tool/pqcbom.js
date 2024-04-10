@@ -172,9 +172,9 @@ function getComponents(filePath, fileExtension){
             libFound = true;
         }
         // Note. This might cause issues if this part doesn't progress in order (top to bottom).
-        // If node library is found..
+        // If node library is found, search for cryptographic components (TODO: later might need to add so that searches even without found crypto library?)
         if(libFound){
-            //TODO: continue
+                      
         }
     }
     if(fileExtension == '.py'){
