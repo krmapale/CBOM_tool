@@ -18,6 +18,23 @@ export class NodeCrypto {
             'x509',
             'crypto',
         ];
+
+        this.algorithm = [ // methods
+            'createCipher', // crypto.createCipher('algorithm', ..)     these can be used without `crypto.` when imported
+            'createCipheriv', // crypto.createCipheriv('algorithm', ..)
+            'createDecipheriv', //createDecipheriv('algorithm', ...)
+            'createDecipher', // createDecipher('algorithm', ...)
+            'createDiffieHellman', // createDiffieHellman(2048)
+            'createDiffieHellmanGroup',  //crypto.createDiffieHellmanGroup(name)
+            'createECDH',                //crypto.createECDH(curveName)
+            'createHash',                //crypto.createHash(algorithm[, options])
+            'createHmac',                //crypto.createHmac(algorithm, key[, options])
+            'createPrivateKey',          //crypto.createPrivateKey(key)
+            'createPublicKey',           //crypto.createPublicKey(key)
+            'createSecretKey',           //crypto.createSecretKey(key[, encoding])
+            'createSign',                //crypto.createSign(algorithm[, options])
+            'createVerify',              //crypto.createVerify(algorithm[, options])
+        ]
         
         this.importRegexp = [
             /\bimport\s+\*\s+as\s+crypto\s+from\s+['"][node:]?crypto['"]/g, // import * as crypto from 'crypto'
