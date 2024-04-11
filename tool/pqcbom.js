@@ -11,6 +11,7 @@ import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
 
 
 let pqcbomVersion = '0.0.1';
+var jsComponentObjects = new Array();
 
 // node memo: new URL();
 
@@ -77,6 +78,12 @@ function createBomFile(filename, dirPath){
         filename = filenameCleaned.concat(fileNameExtension);
     }
 
+    // testing---------------------------------
+    const obj = {
+        name: 'component'
+    }
+    const tmparray = [obj,obj,obj];
+    // testing-----------------------------
 
     // Create JS bom-object.
     const bomObj = {
@@ -90,6 +97,8 @@ function createBomFile(filename, dirPath){
                 version: pqcbomVersion
             }
         },
+
+        // scanDirectory should return an array that contains javascript objects (components)
         components: scanDirectory(dirPath)
     }
 
@@ -117,7 +126,6 @@ function createBomFile(filename, dirPath){
  * @param {Directory that will be scanned} directoryPath 
  */
 function scanDirectory(directoryPath) {
-    const componentArray = new Array();
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
@@ -140,16 +148,22 @@ function scanDirectory(directoryPath) {
                     const fileExtension = path.extname(filePath);
                     // If file extension is supported..
                     if(checkFileExtension(fileExtension)){
-                        const components = getComponents(filePath, fileExtension);
-                        components.forEach(component => {
-                            componentArray.push(component);
-                        });
+                        let components = getComponents(filePath, fileExtension);
+                        console.log(components);
+                        if(components != null || components != undefined){
+                            components.forEach(component => {
+                                console.log('silmukan sisällä');
+                                jsComponentObjects.push(component); // TODO: not working, fix
+                                console.log('comparray: ' + jsComponentObjects);
+                            });
+                        }
                     }
                 }
             });
         });
     });
-    return componentArray;
+    console.log('comparray last: ' + jsComponentObjects);
+    return jsComponentObjects;
 }
 
 
@@ -157,6 +171,7 @@ function getComponents(filePath, fileExtension){
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const nodeCryptoObj = new NodeCrypto();
     let libFound = false;
+    let components = new Array();
 
     let match;
     if(fileExtension == '.js' | fileExtension == '.ts'){
@@ -164,17 +179,25 @@ function getComponents(filePath, fileExtension){
         nodeCryptoObj.importRegexp.forEach((regexpItem) => {
             // Checks if any matches on Node crypto library are found.
             if(fileContent.match(regexpItem) != null){
+                const tmpArray = fileContent.match(regexpItem);
+                tmpArray.forEach(element => {
+                    console.log('Found import: ' + element);
+                });
                 libFound = true;
             }
         }); 
         // if matches node crypto require statement
         if(fileContent.match(nodeCryptoObj.requireRegexp)){
+            const tmpArray1 = fileContent.match(nodeCryptoObj.requireRegexp);
+            console.log('Found require(\'node\'): ' + tmpArray1[0]);
             libFound = true;
         }
-        // Note. This might cause issues if this part doesn't progress in order (top to bottom).
+
+        // Note. This might cause issues if this part doesn't progress in order (top to bottom). Might need to add while-loop etc.
         // If node library is found, search for cryptographic components (TODO: later might need to add so that searches even without found crypto library?)
         if(libFound){
-                      
+            console.log('Node Crypto library found!');
+            components.push(addComponent(filePath, 'algorithm')); // Temporary solution.
         }
     }
     if(fileExtension == '.py'){
@@ -186,6 +209,8 @@ function getComponents(filePath, fileExtension){
     if(fileExtension == '.java'){
         
     }
+
+    return components;
 }
 
 
@@ -207,17 +232,10 @@ function checkFileExtension(fileExtension){
 
 
 
-/**
- * Check file type and scan if relevant. Return 
- * @param {Path to file} filePath 
- * @returns 
- */
-function checkType(filePath){
-    return 'algorithm';
-}
 
 
-function addComponent(filePath){
+
+function addComponent(filePath, cryptoAssetType){
     const component = {
         name: undefined,
         type: 'cryptographic-asset',
@@ -227,10 +245,11 @@ function addComponent(filePath){
             value: filePath
         },
         cryptoProperties: {
-            assetType: checkType(filePath), //TODO: luo aliohjelma joka tarkistaa onko kyse algoritmistä, avaimesta, certistä...
+            assetType: cryptoAssetType, //TODO: luo aliohjelma joka tarkistaa onko kyse algoritmistä, avaimesta, certistä...
         }
     }
 
+    // TODO: tee omat luokat näistä kaikista vaihtoehdoista?
     switch (component.cryptoProperties.assetType){
         case 'algorithm':
             component.cryptoProperties.algorithmProperties = {
@@ -272,7 +291,7 @@ function addComponent(filePath){
             }
             break;
         case 'protocol':
-            component.cryptoProperties.protocolProperties = {
+            component.cryptoProperties.protocolProperties = { //TODO: for node, look up https://nodejs.org/api/crypto.html#crypto-constants
                 type: undefined, //"tls",
                 version: undefined, //"1.2",
                 cipherSuites: [
@@ -296,7 +315,7 @@ function addComponent(filePath){
 
 
 
-    return tempBomObj;
+    return component;
 }
 
 
