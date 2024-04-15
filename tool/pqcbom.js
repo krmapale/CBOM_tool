@@ -99,7 +99,7 @@ function createBomFile(filename, dirPath){
         },
 
         // scanDirectory should return an array that contains javascript objects (components)
-        components: scanDirectory(dirPath)
+        components: new Array(scanDirectory(dirPath))
     }
 
     
@@ -112,7 +112,7 @@ function createBomFile(filename, dirPath){
 
     fs.readFile(filename, 'utf-8' ,(err, data) => {
         if (err) throw err;
-        console.log(data);
+        console.log('fs.readfile data: ' + data);
       }); 
     
 }
@@ -126,54 +126,61 @@ function createBomFile(filename, dirPath){
  * @param {Directory that will be scanned} directoryPath 
  */
 function scanDirectory(directoryPath) {
-    fs.readdir(directoryPath, (err, files) => {
-        if (err) {
-            console.error('Error reading directory:', err);
-            return;
-        }
+
+    try{
+        const files = fs.readdirSync(directoryPath);
 
         files.forEach(file => {
+
             const filePath = path.join(directoryPath, file);
 
-            fs.stat(filePath, (err, stats) => {
-                if (err) {
-                    console.error('Error retrieving file stats:', err);
-                    return;
-                }
+            const isDir = fs.statSync(filePath).isDirectory();
 
-                if (stats.isDirectory()) {
-                    scanDirectory(filePath); // Recursively scan subdirectory
-                } else {
-                    console.log(filePath); // Log file path
-                    const fileExtension = path.extname(filePath);
-                    // If file extension is supported..
-                    if(checkFileExtension(fileExtension)){
-                        let components = getComponents(filePath, fileExtension);
-                        console.log(components);
-                        if(components != null || components != undefined){
-                            components.forEach(component => {
-                                console.log('silmukan sisällä');
-                                jsComponentObjects.push(component); // TODO: not working, fix
-                                console.log('comparray: ' + jsComponentObjects);
-                            });
-                        }
+            if (isDir) {
+                console.log('---Is directory. Keep scanning: ' + filePath);
+                scanDirectory(filePath); // Recursively scan subdirectory
+
+            } else {
+                console.log('---Not a directory: ' + filePath); // Log file path
+                const fileExtension = path.extname(filePath);
+
+                // If file extension is supported..
+                if(checkFileExtension(fileExtension)){
+                    console.log('Supported file type: ' + fileExtension);
+                    let components = getComponents(filePath, fileExtension);
+                    console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
+
+                    if(components != null || components != undefined){
+                        components.forEach(component => {
+                            console.log('silmukan sisällä');
+                            jsComponentObjects.push(component); // TODO: not working, fix
+                            console.log('comparray: ' + JSON.stringify(jsComponentObjects));
+                        });
                     }
                 }
-            });
+            }
         });
-    });
-    console.log('comparray last: ' + jsComponentObjects);
+
+    } catch (error) {
+        console.error('Error scanning directory:', error);
+    }
+
+    console.log('comparray last: ' + JSON.stringify(jsComponentObjects));
     return jsComponentObjects;
 }
 
-
+/**
+ * Searches for cryptographic components within a given file. First checks if file extension type is supported. 
+ * @param {Path to file} filePath 
+ * @param {Files extension} fileExtension 
+ * @returns an array of cryptographic components
+ */
 function getComponents(filePath, fileExtension){
     const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const nodeCryptoObj = new NodeCrypto();
+    const nodeCryptoObj = new NodeCrypto(); // create a NodeCrypto object that is used to retreive regexpes
     let libFound = false;
-    let components = new Array();
+    let components = new Array(); // add found components to this array
 
-    let match;
     if(fileExtension == '.js' | fileExtension == '.ts'){
         // NodeCrypto.importRegexp has an array of regexpes that match importing from Node crypto library
         nodeCryptoObj.importRegexp.forEach((regexpItem) => {
@@ -234,7 +241,12 @@ function checkFileExtension(fileExtension){
 
 
 
-
+/**
+ * Creates and returns a cycloneDX cryptographic component.
+ * @param {Path to file} filePath 
+ * @param {Specifies the type of cryptographic asset} cryptoAssetType 
+ * @returns a cycloneDX cryptographic component
+ */
 function addComponent(filePath, cryptoAssetType){
     const component = {
         name: undefined,
@@ -314,7 +326,7 @@ function addComponent(filePath, cryptoAssetType){
     }
 
 
-
+    console.log('addComponent functions cryptographic component: ' + JSON.stringify(component));
     return component;
 }
 
