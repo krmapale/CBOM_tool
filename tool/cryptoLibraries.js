@@ -19,21 +19,30 @@ export class NodeCrypto {
             'crypto',
         ];
 
-        this.algorithm = [ // methods
-            'createCipher', // crypto.createCipher('algorithm', ..)     these can be used without `crypto.` when imported
-            'createCipheriv', // crypto.createCipheriv('algorithm', ..)
-            'createDecipheriv', //createDecipheriv('algorithm', ...)
-            'createDecipher', // createDecipher('algorithm', ...)
-            'createDiffieHellman', // createDiffieHellman(2048)
-            'createDiffieHellmanGroup',  //crypto.createDiffieHellmanGroup(name)
-            'createECDH',                //crypto.createECDH(curveName)
+        this.algorithm = [               //methods
+            'createCipher',              //crypto.createCipher('algorithm', ..)     these can be used without `crypto.` when imported
+            'createCipheriv',            //crypto.createCipheriv('algorithm', ..)
+            'createDecipheriv',          //createDecipheriv('algorithm', ...)
+            'createDecipher',            //createDecipher('algorithm', ...)
             'createHash',                //crypto.createHash(algorithm[, options])
             'createHmac',                //crypto.createHmac(algorithm, key[, options])
+            'createSign',                //crypto.createSign(algorithm[, options])
+            'createVerify',              //crypto.createVerify(algorithm[, options])
+            'hash',                      //crypto.hash(algorithm, data[, outputEncoding])
+        ]
+
+        this.relatedCryptoMaterial = [   // keys
             'createPrivateKey',          //crypto.createPrivateKey(key)
             'createPublicKey',           //crypto.createPublicKey(key)
             'createSecretKey',           //crypto.createSecretKey(key[, encoding])
-            'createSign',                //crypto.createSign(algorithm[, options])
-            'createVerify',              //crypto.createVerify(algorithm[, options])
+            'createDiffieHellman',       // createDiffieHellman(2048)
+            'createDiffieHellmanGroup',  //crypto.createDiffieHellmanGroup(name)
+            'getDiffieHellman',          // crypto.getDiffieHellman(groupName)
+            'createECDH',                //crypto.createECDH(curveName)
+            'generateKey',               //crypto.generateKey(type, options, callback)
+            'generateKeyPair',           //crypto.generateKeyPair(type, options, callback)
+            'generateKeyPairSync',       //crypto.generateKeyPairSync(type, options)
+            'generateKeySync',           //crypto.generateKeySync(type, options)
         ]
         
         this.importRegexp = [
