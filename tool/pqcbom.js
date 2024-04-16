@@ -11,7 +11,7 @@ import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
 
 
 let pqcbomVersion = '0.0.1';
-var jsComponentObjects = new Array();
+var componentObjects = new Array();
 
 // node memo: new URL();
 
@@ -120,10 +120,10 @@ function createBomFile(filename, dirPath){
 
 
 
-
 /**
- * Scans files recursively from given directory.
- * @param {Directory that will be scanned} directoryPath 
+ * Recursively scans given directory.
+ * @param {Begins dir scanning from this path} directoryPath 
+ * @returns an array of component objects
  */
 function scanDirectory(directoryPath) {
 
@@ -148,13 +148,13 @@ function scanDirectory(directoryPath) {
                 if(checkFileExtension(fileExtension)){
                     console.log('Supported file type: ' + fileExtension);
                     let components = getComponents(filePath, fileExtension);
-                    console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
+                    //console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
 
                     if(components != null || components != undefined){
                         components.forEach(component => {
                             console.log('silmukan sisällä');
-                            jsComponentObjects.push(component); // TODO: not working, fix
-                            console.log('comparray: ' + JSON.stringify(jsComponentObjects));
+                            componentObjects.push(component); 
+                            //console.log('comparray: ' + JSON.stringify(componentObjects));
                         });
                     }
                 }
@@ -165,9 +165,10 @@ function scanDirectory(directoryPath) {
         console.error('Error scanning directory:', error);
     }
 
-    console.log('comparray last: ' + JSON.stringify(jsComponentObjects));
-    return jsComponentObjects;
+    //console.log('comparray last: ' + JSON.stringify(componentObjects, null, 2));
+    return componentObjects;
 }
+
 
 /**
  * Searches for cryptographic components within a given file. First checks if file extension type is supported. 
@@ -182,8 +183,10 @@ function getComponents(filePath, fileExtension){
     let components = new Array(); // add found components to this array
 
     if(fileExtension == '.js' | fileExtension == '.ts'){
+
         // NodeCrypto.importRegexp has an array of regexpes that match importing from Node crypto library
         nodeCryptoObj.importRegexp.forEach((regexpItem) => {
+
             // Checks if any matches on Node crypto library are found.
             if(fileContent.match(regexpItem) != null){
                 const tmpArray = fileContent.match(regexpItem);
@@ -193,6 +196,7 @@ function getComponents(filePath, fileExtension){
                 libFound = true;
             }
         }); 
+        
         // if matches node crypto require statement
         if(fileContent.match(nodeCryptoObj.requireRegexp)){
             const tmpArray1 = fileContent.match(nodeCryptoObj.requireRegexp);
@@ -204,7 +208,11 @@ function getComponents(filePath, fileExtension){
         // If node library is found, search for cryptographic components (TODO: later might need to add so that searches even without found crypto library?)
         if(libFound){
             console.log('Node Crypto library found!');
-            components.push(addComponent(filePath, 'algorithm')); // Temporary solution.
+            //components.push(addComponent(filePath, 'algorithm')); // Temporary solution.
+            nodeCryptoObj.algorithm.forEach(element => {
+                const tmpRegexp = new RegExp(`\\b\\.?\\s*${element}\\(`, 'g'); // TODO: continue. Should work now. 
+                
+            });
         }
     }
     if(fileExtension == '.py'){
@@ -326,7 +334,7 @@ function addComponent(filePath, cryptoAssetType){
     }
 
 
-    console.log('addComponent functions cryptographic component: ' + JSON.stringify(component));
+    //console.log('addComponent functions cryptographic component: ' + JSON.stringify(component));
     return component;
 }
 
