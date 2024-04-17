@@ -44,6 +44,10 @@ export class NodeCrypto {
             'generateKeyPairSync',       //crypto.generateKeyPairSync(type, options)
             'generateKeySync',           //crypto.generateKeySync(type, options)
         ]
+
+        this.certificate = [
+            'new X509Certificate'         //new X509Certificate(buffer)
+        ]
         
         this.importRegexp = [
             /\bimport\s+\*\s+as\s+crypto\s+from\s+['"][node:]?crypto['"]/g, // import * as crypto from 'crypto'

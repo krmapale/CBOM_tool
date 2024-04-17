@@ -210,8 +210,8 @@ function getComponents(filePath, fileExtension){
             console.log('Node Crypto library found!');
             //components.push(addComponent(filePath, 'algorithm')); // Temporary solution.
             nodeCryptoObj.algorithm.forEach(element => {
-                const tmpRegexp = new RegExp(`\\b\\.?\\s*${element}\\(`, 'g'); // TODO: continue. Should work now. 
-                
+                const tmpRegexp = new RegExp(`(((crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+                //if(fileContent.match(tmpRegexp))
             });
         }
     }
