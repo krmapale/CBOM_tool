@@ -208,12 +208,36 @@ function getComponents(filePath, fileExtension){
         // If node library is found, search for cryptographic components (TODO: later might need to add so that searches even without found crypto library?)
         if(libFound){
             console.log('Node Crypto library found!');
-            //components.push(addComponent(filePath, 'algorithm')); // Temporary solution.
-            nodeCryptoObj.algorithm.forEach(element => {
-                const tmpRegexp = new RegExp(`(((crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
-                //if(fileContent.match(tmpRegexp))
-            });
+
+            const setOfAlgRegexpMatches = new Set();
+            const setOfCryptMatRegexpMatches = new Set();
+            const setOfCertRegexpMatches = new Set();
+            
+            setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent);
+            setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent);
+            setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent); // NOT TESTED
+
+            if(setOfAlgRegexpMatches.size > 0){
+                setOfAlgRegexpMatches.forEach(regexpMatch => {
+                    components.push(addComponent(filePath, 'algorithm', regexpMatch));
+                });
+
+            }
+            if(setOfCryptMatRegexpMatches.size > 0){
+                setOfCryptMatRegexpMatches.forEach(regexpMatch => {
+                    components.push(addComponent(filePath, 'related-crypto-material', regexpMatch));
+                });
+
+            }
+            if(setOfCertRegexpMatches.size > 0){
+                setOfCertRegexpMatches.forEach(regexpMatch => {
+                    components.push(addComponent(filePath, 'certification', regexpMatch));
+                });
+
+            }
         }
+
+
     }
     if(fileExtension == '.py'){
         
@@ -227,6 +251,27 @@ function getComponents(filePath, fileExtension){
 
     return components;
 }
+
+/**
+ * Finds cryptographic components from a specific file. Search elements are given as a paramater 
+ * and added to Node Crypto library specific regexp search. Search matches are added to an Array, converted to 
+ * a Set object and returned. 
+ * @param {Search elements that will be included in regexp search} searchElementsArray 
+ * @param {Content of the file that is being scanned} fileContent 
+ * @returns a set-object of regexp matches from the scanned file
+ */
+function findNodeCryptoComponents(searchElementsArray, fileContent){
+    const tmpArray = new Array();
+    searchElementsArray.forEach(element => {
+        const tmpRegexp = new RegExp(`(((crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+        tmpArray.push(fileContent.match(tmpRegexp));
+    });
+
+    const tmpSet = new Set(tmpArray);
+
+    return tmpSet;
+}
+
 
 
 /**
@@ -246,8 +291,28 @@ function checkFileExtension(fileExtension){
 }
 
 
+/**
+ * 
+ * @param {A string that contains data about a crypto method call and it's first parameter} regexpMatchString 
+ * @returns trimmed version of method calls first param
+ */
+function extractFirstParameter(regexpMatchString){
 
+    const firstParam = regexpMatchString.slice(regexpMatchString.indexOf('(')+1, regexpMatchString.indexOf(',')-1);
+    const firstParamTrim = firstParam.trim();
 
+    if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
+        return firstParamTrim; //TODO: JATKA TÄSTÄ. Mieti onko tämä ok vai pitääkö tälle funktiolle tehdä muutoksia?
+    }
+    if(firstParamTrim.includes('\'') | firstParamTrim.includes('\"')){
+        firstParamTrim = firstParamTrim.replaceAll(/\'|\"/ , '');
+    }
+    else {
+        firstParamTrim = null; // If no string parameter is found, a variable has probably been used instead. TODO: create a fix for gathering information from variables?
+    }
+
+    return firstParamTrim;
+}
 
 /**
  * Creates and returns a cycloneDX cryptographic component.
@@ -255,9 +320,10 @@ function checkFileExtension(fileExtension){
  * @param {Specifies the type of cryptographic asset} cryptoAssetType 
  * @returns a cycloneDX cryptographic component
  */
-function addComponent(filePath, cryptoAssetType){
+function addComponent(filePath, cryptoAssetType, regexpMatchString){
+
     const component = {
-        name: undefined,
+        name: extractFirstParameter(regexpMatchString),
         type: 'cryptographic-asset',
         bomref: undefined,
         properties: {
@@ -265,11 +331,13 @@ function addComponent(filePath, cryptoAssetType){
             value: filePath
         },
         cryptoProperties: {
-            assetType: cryptoAssetType, //TODO: luo aliohjelma joka tarkistaa onko kyse algoritmistä, avaimesta, certistä...
+            assetType: cryptoAssetType, 
         }
     }
 
-    // TODO: tee omat luokat näistä kaikista vaihtoehdoista?
+    
+
+    //TODO: Later fix this part to use a JSON file that contains information about the CycloneDX v1.6 cryptoProperties requirements and options. 
     switch (component.cryptoProperties.assetType){
         case 'algorithm':
             component.cryptoProperties.algorithmProperties = {
