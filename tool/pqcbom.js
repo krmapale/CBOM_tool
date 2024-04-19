@@ -292,26 +292,73 @@ function checkFileExtension(fileExtension){
 
 
 /**
- * 
+ * Extract the first parameter from a method call
  * @param {A string that contains data about a crypto method call and it's first parameter} regexpMatchString 
  * @returns trimmed version of method calls first param
  */
 function extractFirstParameter(regexpMatchString){
 
-    const firstParam = regexpMatchString.slice(regexpMatchString.indexOf('(')+1, regexpMatchString.indexOf(',')-1);
-    const firstParamTrim = firstParam.trim();
+    let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('(')+1, regexpMatchString.indexOf(',')-1);
+    let firstParamTrim = firstParam.trim();
 
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
-        return firstParamTrim; //TODO: JATKA TÄSTÄ. Mieti onko tämä ok vai pitääkö tälle funktiolle tehdä muutoksia?
+        return firstParamTrim; 
     }
-    if(firstParamTrim.includes('\'') | firstParamTrim.includes('\"')){
-        firstParamTrim = firstParamTrim.replaceAll(/\'|\"/ , '');
+    if(firstParamTrim.match(/^\'(\w+)(-(\w*))*\'$/) | firstParamTrim.match(/^\"(\w+)(-(\w*))*\"$/)){
+        firstParamTrim = firstParamTrim.replaceAll(/\'|\"/g , '');
     }
     else {
         firstParamTrim = null; // If no string parameter is found, a variable has probably been used instead. TODO: create a fix for gathering information from variables?
     }
 
     return firstParamTrim;
+}
+
+class NistQuantumSecLevel{
+    constructor(){
+        this.levelZero = [ // very weak
+            // < AES 128, DES, SHA-224, RSA/DH-2048, ECC 224,
+            'DES',
+            'SHA-224',
+            'RSA-2048',
+            'DH-2048',
+            'ECC-224'
+        ];
+        this.levelOne = [ // weak
+            'AES128',
+            'AES-128',
+            'KYBER-512',
+            'RSA-3072',
+            'DH-3072',
+            'ECC-256'        
+        ]
+        this.levelTwo = [ // strong  
+            'SHA256',
+            'SHA3-256',
+        ]
+        this.levelThree = [ // stonger
+            'AES192',
+            'AES-192',
+            'KYBER-768',
+            'RSA-7068',
+            'DH-7068',
+            'ECC-384'
+        ]
+        this.levelFour = [ // very strong
+            'SHA384',
+            'SHA3-384'
+        ]
+        this.levelFive = [ // strongest
+            'AES256',
+            'AES-256',
+            'KYBER-1024',
+            'ECC-512',
+            'SHA-512'
+        ]
+        this.levelSix = [ // ?
+            // ?
+        ]
+    }
 }
 
 /**
@@ -322,8 +369,20 @@ function extractFirstParameter(regexpMatchString){
  */
 function addComponent(filePath, cryptoAssetType, regexpMatchString){
 
+    let firstParam = extractFirstParameter(regexpMatchString);
+    let paramSetID = undefined;
+    let classicalSecLvl = undefined;
+    let nistQTsecLvl = undefined;
+
+    if(firstParam != null & firstParam.match(/\d+/g)){ // HUOM. JOS tulee kaksi lukua niin tässä kohtaa voi tulla ongelmaa
+        paramSetID = firstParam.match(/\d+/g);
+        classicalSecLvl = parseInt(paramSetID);
+        //nistQTsecLvl = getNistQuantumSecLevel(paramSetID);
+    }
+
+
     const component = {
-        name: extractFirstParameter(regexpMatchString),
+        name: firstParam,
         type: 'cryptographic-asset',
         bomref: undefined,
         properties: {
@@ -342,13 +401,13 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
         case 'algorithm':
             component.cryptoProperties.algorithmProperties = {
                 primitive: undefined, //TODO
-                parameterSetIdentifier: undefined, //TODO
+                parameterSetIdentifier: paramSetID, 
                 mode: undefined,
-                executionEnvironment: undefined, //TODO
-                implemenetationPlatform: undefined, //TODO
+                executionEnvironment: undefined, 
+                implemenetationPlatform: undefined, 
                 certificationLevel: undefined,
-                cryptoFunctions: undefined, //TODO
-                classicalSecurityLevel: undefined, //TODO
+                cryptoFunctions: undefined, 
+                classicalSecurityLevel: classicalSecLvl, 
                 nistQuantumSecurityLevel: undefined //TODO
             }
             break;
