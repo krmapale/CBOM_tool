@@ -1,6 +1,6 @@
 
 
-
+/*
 const testArray = [
     'crypto.createPrivateKey(\'asdasdad\')', //match
     'crypto.createPrivateKey(\'asda-sdad\')', //match
@@ -36,3 +36,21 @@ testArray.forEach(stringElement => {
     }
     
 });
+
+let string1 = "\'asdasd\'";
+
+if(string1.match(/^\'(\w+)(-(\w*))*\'$/)){
+    console.log('match! : ' + string1);
+    string1 = string1.replaceAll(/\'|\"/g , '');
+    console.log('removed quotes! : ' + string1);
+}
+else{
+    console.log('no match');
+}
+*/
+
+let digits = 'asd123dsa';
+
+if(digits.match(/\d+/g)){
+    console.log('match! : ' + digits.match(/\d+/g));
+}
