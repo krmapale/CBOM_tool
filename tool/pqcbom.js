@@ -8,6 +8,7 @@ import { argv } from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
+import { NistQuantumSecLevel } from './nistQuantumSecLevels.js';
 
 
 let pqcbomVersion = '0.0.1';
@@ -263,7 +264,7 @@ function getComponents(filePath, fileExtension){
 function findNodeCryptoComponents(searchElementsArray, fileContent){
     const tmpArray = new Array();
     searchElementsArray.forEach(element => {
-        const tmpRegexp = new RegExp(`(((crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+        const tmpRegexp = new RegExp(`((^(crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
         tmpArray.push(fileContent.match(tmpRegexp));
     });
 
@@ -314,52 +315,6 @@ function extractFirstParameter(regexpMatchString){
     return firstParamTrim;
 }
 
-class NistQuantumSecLevel{
-    constructor(){
-        this.levelZero = [ // very weak
-            // < AES 128, DES, SHA-224, RSA/DH-2048, ECC 224,
-            'DES',
-            'SHA-224',
-            'RSA-2048',
-            'DH-2048',
-            'ECC-224'
-        ];
-        this.levelOne = [ // weak
-            'AES128',
-            'AES-128',
-            'KYBER-512',
-            'RSA-3072',
-            'DH-3072',
-            'ECC-256'        
-        ]
-        this.levelTwo = [ // strong  
-            'SHA256',
-            'SHA3-256',
-        ]
-        this.levelThree = [ // stonger
-            'AES192',
-            'AES-192',
-            'KYBER-768',
-            'RSA-7068',
-            'DH-7068',
-            'ECC-384'
-        ]
-        this.levelFour = [ // very strong
-            'SHA384',
-            'SHA3-384'
-        ]
-        this.levelFive = [ // strongest
-            'AES256',
-            'AES-256',
-            'KYBER-1024',
-            'ECC-512',
-            'SHA-512'
-        ]
-        this.levelSix = [ // ?
-            // ?
-        ]
-    }
-}
 
 /**
  * Creates and returns a cycloneDX cryptographic component.
@@ -369,10 +324,20 @@ class NistQuantumSecLevel{
  */
 function addComponent(filePath, cryptoAssetType, regexpMatchString){
 
+
     let firstParam = extractFirstParameter(regexpMatchString);
     let paramSetID = undefined;
     let classicalSecLvl = undefined;
     let nistQTsecLvl = undefined;
+    //
+    //   TODO: Näillä kutsuilla voisin hakea algoritmien yms nimet suoraan, pohdi täytyykö muuttaa toteutusta?
+    //crypto.getCipherInfo(nameOrNid[, options])
+    //crypto.getCiphers()
+    //crypto.getCurves()
+    //crypto.getDiffieHellman(groupName)
+    //crypto.getFips()
+    //crypto.getHashes()
+    //crypto.getRandomValues(typedArray)
 
     if(firstParam != null & firstParam.match(/\d+/g)){ // HUOM. JOS tulee kaksi lukua niin tässä kohtaa voi tulla ongelmaa
         paramSetID = firstParam.match(/\d+/g);
