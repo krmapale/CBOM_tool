@@ -1,5 +1,4 @@
-
-
+/*
 import fs from 'node:fs';
 import path from 'node:path'; 
 import { argv } from 'node:process';
@@ -14,7 +13,7 @@ import { DiffieHellman, ECDH, createHmac, createPrivateKey, createPublicKey, dif
 
 // TEST FILE FOR NODE CRYPTO LIBRARY
 
-const crypto = require('crypto');
+
 
 
 // ALGORITHMS
@@ -67,4 +66,19 @@ const key25 = generateKeys();
 
 // CERT
 const cert1 = new X509Certificate();
+*/
+const crypto = require('crypto');
+
+//const arr10 = crypto.getCipherInfo();
+const arr11 = crypto.getCiphers();
+console.log(arr11);
+//const arr12 = crypto.getCurves();
+//console.log(arr12);
+//const arr13 = crypto.getDiffieHellman();
+//const arr14 = crypto.getFips();
+const arr15 = crypto.getHashes();
+console.log(arr15);
+//const arr16 = crypto.getRandomValues();
+
+
 

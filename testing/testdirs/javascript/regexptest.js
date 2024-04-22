@@ -24,7 +24,7 @@ const testArray = [
 ]
 
 const element = 'createPrivateKey';
-const tmpRegexp = new RegExp(`(((crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+const tmpRegexp = new RegExp(`((^(crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
 
 
 testArray.forEach(stringElement => {
@@ -36,7 +36,6 @@ testArray.forEach(stringElement => {
     }
     
 });
-
 let string1 = "\'asdasd\'";
 
 if(string1.match(/^\'(\w+)(-(\w*))*\'$/)){
@@ -47,10 +46,71 @@ if(string1.match(/^\'(\w+)(-(\w*))*\'$/)){
 else{
     console.log('no match');
 }
-*/
+
 
 let digits = 'asd123dsa';
 
 if(digits.match(/\d+/g)){
     console.log('match! : ' + digits.match(/\d+/g));
+}*/
+
+
+
+const crypto = require('crypto');
+let ciphers = crypto.getCiphers();
+
+ciphers.forEach(element => {
+    testGetCiphers(element, ciphers);
+});
+
+
+//testGetCiphers('aes256-wrap', ciphers);
+
+
+
+function testGetCiphers(regexpMatchString, ciphers){
+
+let paramSetID = undefined;
+let classicalSecLvl = undefined;
+let nistQTsecLvl = undefined;
+let algorithmMode = undefined;
+
+
+for (let cipher of ciphers){
+    if(cipher.match(regexpMatchString)){
+        console.log('match found! ' + regexpMatchString + ' : ' + regexpMatchString.match(cipher));
+        let cipherString = cipher.replaceAll(/\'|\"/g , '');
+        if(cipherString.includes('-')){
+            const splitCipher = cipher.split('-');
+            console.log(splitCipher[0]);
+            console.log(splitCipher[1]);
+            if(splitCipher[1].match(/\d{3,}/g)){
+                paramSetID = splitCipher[1].match(/\d{3,}/g);
+                classicalSecLvl = parseInt(paramSetID);
+            }
+            if(splitCipher.length > 2){
+                algorithmMode = splitCipher[2];
+            }
+            if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
+                paramSetID = splitCipher[0].match(/\d{3}/g);
+                classicalSecLvl = parseInt(paramSetID);
+                algorithmMode = splitCipher[1];
+            }
+        }
+        else{
+            if(cipherString.match(/\d{3,}/g)){
+                paramSetID = cipherString.match(/\d{3,}/g);
+                classicalSecLvl = parseInt(paramSetID);
+            }
+        }
+        break;
+    }
+}
+
+
+console.log('Search string : ' + regexpMatchString);
+console.log('Parameter set identifier : ' + paramSetID);
+console.log('Classical security level : ', classicalSecLvl);
+console.log('Algorithm mode : ' + algorithmMode);
+
 }

@@ -9,6 +9,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { NodeCrypto, WebCryptoAPI } from './cryptoLibraries.js';
 import { NistQuantumSecLevel } from './nistQuantumSecLevels.js';
+import crypto from 'crypto';
 
 
 let pqcbomVersion = '0.0.1';
@@ -293,11 +294,12 @@ function checkFileExtension(fileExtension){
 
 
 /**
- * Extract the first parameter from a method call
+ * Extract the first parameter from a method call. 
  * @param {A string that contains data about a crypto method call and it's first parameter} regexpMatchString 
  * @returns trimmed version of method calls first param
  */
 function extractFirstParameter(regexpMatchString){
+
 
     let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('(')+1, regexpMatchString.indexOf(',')-1);
     let firstParamTrim = firstParam.trim();
@@ -309,7 +311,7 @@ function extractFirstParameter(regexpMatchString){
         firstParamTrim = firstParamTrim.replaceAll(/\'|\"/g , '');
     }
     else {
-        firstParamTrim = null; // If no string parameter is found, a variable has probably been used instead. TODO: create a fix for gathering information from variables?
+        firstParamTrim = "UNABLE TO READ VARIABLE"; // If no string parameter is found, a variable has probably been used instead. TODO: create a fix for gathering information from variables?
     }
 
     return firstParamTrim;
@@ -325,22 +327,59 @@ function extractFirstParameter(regexpMatchString){
 function addComponent(filePath, cryptoAssetType, regexpMatchString){
 
 
-    let firstParam = extractFirstParameter(regexpMatchString);
+    let firstParam = extractFirstParameter(regexpMatchString); // retreives the parameter name from the method call (regexMatchString)
     let paramSetID = undefined;
     let classicalSecLvl = undefined;
     let nistQTsecLvl = undefined;
-    //
-    //   TODO: Näillä kutsuilla voisin hakea algoritmien yms nimet suoraan, pohdi täytyykö muuttaa toteutusta?
-    //crypto.getCipherInfo(nameOrNid[, options])
-    //crypto.getCiphers()
-    //crypto.getCurves()
-    //crypto.getDiffieHellman(groupName)
-    //crypto.getFips()
-    //crypto.getHashes()
-    //crypto.getRandomValues(typedArray)
+    let algorithmMode = undefined;
+ 
 
-    if(firstParam != null & firstParam.match(/\d+/g)){ // HUOM. JOS tulee kaksi lukua niin tässä kohtaa voi tulla ongelmaa
-        paramSetID = firstParam.match(/\d+/g);
+    // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
+    // to the components attributes.
+    let ciphers = crypto.getCiphers(); //TODO: think about how to add NIST quantum security levels
+    for (let cipher of ciphers){
+        if(regexpMatchString.match(cipher)){
+            let cipherString = cipher.replaceAll(/\'|\"/g , '');
+            if(cipherString.includes('-')){
+                const splitCipher = cipher.split('-');
+                if(splitCipher[1].match(/\d{3,}/g)){
+                    paramSetID = splitCipher[1].match(/\d{3,}/g);
+                    classicalSecLvl = parseInt(paramSetID);
+                }
+                if(splitCipher.length > 2){
+                    algorithmMode = splitCipher[2];
+                }
+                if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
+                    paramSetID = splitCipher[0].match(/\d{3}/g);
+                    classicalSecLvl = parseInt(paramSetID);
+                    algorithmMode = splitCipher[1];
+                }
+            }
+            else{
+                if(cipherString.match(/\d{3,}/g)){
+                    paramSetID = cipherString.match(/\d{3,}/g);
+                    classicalSecLvl = parseInt(paramSetID);
+                }
+            }
+            break;
+        }
+    }
+
+    crypto.getHashes().forEach(hash => {
+        if(regexpMatchString.match(hash)){
+            return hash.replaceAll(/\'|\"/g , '');
+        }
+    });
+
+    crypto.getCurves().forEach(curve => {
+        if(regexpMatchString.match(curve)){
+            return curve.replaceAll(/\'|\"/g , '');
+        }
+    });
+    
+
+    if(firstParam != null & firstParam.match(/\d+/g)){ 
+        paramSetID = firstParam.match(/\d+/g);  // HUOM. JOS tulee kaksi lukua niin tässä kohtaa voi tulla ongelmaa
         classicalSecLvl = parseInt(paramSetID);
         //nistQTsecLvl = getNistQuantumSecLevel(paramSetID);
     }
@@ -367,13 +406,13 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
             component.cryptoProperties.algorithmProperties = {
                 primitive: undefined, //TODO
                 parameterSetIdentifier: paramSetID, 
-                mode: undefined,
+                mode: algorithmMode,
                 executionEnvironment: undefined, 
                 implemenetationPlatform: undefined, 
                 certificationLevel: undefined,
                 cryptoFunctions: undefined, 
                 classicalSecurityLevel: classicalSecLvl, 
-                nistQuantumSecurityLevel: undefined //TODO
+                nistQuantumSecurityLevel: nistQTsecLvl 
             }
             break;
         case 'certificate':
