@@ -334,12 +334,16 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
     let algorithmMode = undefined;
  
 
+    let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
+    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam); // NOTE: in instances like this: aes-256-cbc-hmac-sha256 just returns the quantum sec level of the first algorithm it finds.
+
+
     // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
     // to the components attributes.
     let ciphers = crypto.getCiphers(); //TODO: think about how to add NIST quantum security levels
     for (let cipher of ciphers){
-        if(regexpMatchString.match(cipher)){
-            let cipherString = cipher.replaceAll(/\'|\"/g , '');
+        if(firstParam.match(cipher)){
+            //let cipherString = cipher.replaceAll(/\'|\"/g , '');
             if(cipherString.includes('-')){
                 const splitCipher = cipher.split('-');
                 if(splitCipher[1].match(/\d{3,}/g)){

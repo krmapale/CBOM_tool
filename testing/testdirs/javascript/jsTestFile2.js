@@ -87,11 +87,35 @@ class NistQuantumSecLevel{
             ]
         } 
     }
+
+    getNistQuantumSecLevel(firstParam) {
+        //const nistQuantumSecLvlObject = new NistQuantumSecLevel();
+        //console.log(JSON.stringify(this, null, 2));
+        for(let propertyName of Object.getOwnPropertyNames(this)){
+            //console.log(propertyName);
+            //console.log(JSON.stringify(this[propertyName].algorithms, null, 2));
+
+            for(let algorithm of this[propertyName].algorithms){
+                console.log('algorithm: ' + algorithm);
+                console.log('param: ' + firstParam);
+
+                if(firstParam.match(new RegExp(`${algorithm}`, 'i'))){
+                    console.log("found it!");
+                    //console.log(JSON.stringify(this[propertyName]['level'], null, 2));
+                    return this[propertyName]['level'];
+                }
+            }
+        }
+        return undefined;
+    }
 }
 
-const nistQTsecLvl = new NistQuantumSecLevel();
+let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
+const firstParam = 'dfhdf'; 
+nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
 
+console.log('Nist quantum security level for '+ firstParam +  ' : ', nistQTsecLvl);
 
-console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[0] + ', property value: ' , nistQTsecLvl.levelZero.level);
-console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[1] + ', property values: ', JSON.stringify(nistQTsecLvl.levelZero.algorithms));
+//console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[0] + ', property value: ' , nistQTsecLvl.levelZero.level);
+//console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[1] + ', property values: ', JSON.stringify(nistQTsecLvl.levelZero.algorithms));
 

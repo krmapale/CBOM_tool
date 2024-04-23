@@ -79,7 +79,8 @@ let algorithmMode = undefined;
 for (let cipher of ciphers){
     if(cipher.match(regexpMatchString)){
         console.log('match found! ' + regexpMatchString + ' : ' + regexpMatchString.match(cipher));
-        let cipherString = cipher.replaceAll(/\'|\"/g , '');
+        //console.log(cipher);
+        //let cipherString = cipher.replaceAll(/\'|\"/g , '');
         if(cipherString.includes('-')){
             const splitCipher = cipher.split('-');
             console.log(splitCipher[0]);

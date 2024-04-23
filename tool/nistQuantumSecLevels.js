@@ -69,14 +69,16 @@ export class NistQuantumSecLevel{
             ]
         } 
     }
+
+    getNistQuantumSecLevel(firstParam) {
+        for(let propertyName of Object.getOwnPropertyNames(this)){
+            for(let algorithm of this[propertyName].algorithms){
+                if(firstParam.match(new RegExp(`${algorithm}`, 'i'))){
+                    return this[propertyName]['level'];
+                }
+            }
+        }
+        return undefined;
+    }
 }
 
-function getNistQuantumSecLevel(regexpMatchString) {
-        const nistQuantumSecLvlObject = new NistQuantumSecLevel();
-
-        nistQuantumSecLvlObject.forEach(propertyElement => {
-            propertyElement.algorithms.forEach(algorithm => {
-                
-            });
-        });
-}
