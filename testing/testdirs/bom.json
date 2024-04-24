@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "metadata": {
-    "timestamp": "2024-04-15T12:12:05.752Z",
+    "timestamp": "2024-04-24T12:25:51.646Z",
     "component": {
       "type": "application",
       "name": "PQCBOM tool",
@@ -12,6 +12,7 @@
   "components": [
     [
       {
+        "name": "algorithm",
         "type": "cryptographic-asset",
         "properties": {
           "name": "SrcFile",
@@ -23,6 +24,441 @@
         }
       },
       {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "aes-128-cbc-hmac-sha256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "mode": "cbc",
+            "classicalSecurityLevel": 128,
+            "nistQuantumSecurityLevel": 1
+          }
+        }
+      },
+      {
+        "name": "camellia-128-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "mode": "cbc",
+            "classicalSecurityLevel": 128
+          }
+        }
+      },
+      {
+        "name": "des3",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "id-aes256-GCM",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "aes128",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "classicalSecurityLevel": 128,
+            "nistQuantumSecurityLevel": 1
+          }
+        }
+      },
+      {
+        "name": "blowfish",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "id-aes192-wrap",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "192",
+            "classicalSecurityLevel": 192,
+            "nistQuantumSecurityLevel": 3
+          }
+        }
+      },
+      {
+        "name": "rc2-64-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "aes-256-cfb1",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "mode": "cfb",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "des-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "id-smime-alg-CMS3DESwrap",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "mode": "alg",
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "seed-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "bf-ecb",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "des-ede3-cfb1",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "rc4-hmac-md5",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "camellia256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "algorithm",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "camellia-128-cfb8",
         "type": "cryptographic-asset",
         "properties": {
           "name": "SrcFile",
@@ -30,7 +466,116 @@
         },
         "cryptoProperties": {
           "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "mode": "cfb",
+            "classicalSecurityLevel": 128
+          }
+        }
+      },
+      {
+        "name": "camellia128",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile2.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "classicalSecurityLevel": 128
+          }
+        }
+      },
+      {
+        "name": "camellia256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile2.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      },
+      {
+        "name": "des-ede3",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsTestFile2.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "aes-128-cbc-hmac-sha1",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/regexptest.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "mode": "cbc",
+            "classicalSecurityLevel": 128,
+            "nistQuantumSecurityLevel": 1
+          }
+        }
+      },
+      {
+        "name": "bf",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/regexptest.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
           "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "aes128",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/regexptest.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "128",
+            "classicalSecurityLevel": 128,
+            "nistQuantumSecurityLevel": 1
+          }
+        }
+      },
+      {
+        "name": "aes192",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/regexptest.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "192",
+            "classicalSecurityLevel": 192,
+            "nistQuantumSecurityLevel": 3
+          }
         }
       }
     ]

@@ -1,6 +1,6 @@
 
 
-/*
+
 const testArray = [
     'crypto.createPrivateKey(\'asdasdad\')', //match
     'crypto.createPrivateKey(\'asda-sdad\')', //match
@@ -52,7 +52,7 @@ let digits = 'asd123dsa';
 
 if(digits.match(/\d+/g)){
     console.log('match! : ' + digits.match(/\d+/g));
-}*/
+}
 
 
 
@@ -74,33 +74,33 @@ let paramSetID = undefined;
 let classicalSecLvl = undefined;
 let nistQTsecLvl = undefined;
 let algorithmMode = undefined;
-
+const digitRegexp = new RegExp(/\d{3,}/, "g");
 
 for (let cipher of ciphers){
     if(cipher.match(regexpMatchString)){
         console.log('match found! ' + regexpMatchString + ' : ' + regexpMatchString.match(cipher));
         //console.log(cipher);
-        //let cipherString = cipher.replaceAll(/\'|\"/g , '');
+        let cipherString = cipher.replaceAll(/\'|\"/g , '');
         if(cipherString.includes('-')){
             const splitCipher = cipher.split('-');
             console.log(splitCipher[0]);
             console.log(splitCipher[1]);
-            if(splitCipher[1].match(/\d{3,}/g)){
-                paramSetID = splitCipher[1].match(/\d{3,}/g);
+            if(splitCipher[1].match(digitRegexp)){
+                paramSetID = splitCipher[1].match(digitRegexp);
                 classicalSecLvl = parseInt(paramSetID);
             }
             if(splitCipher.length > 2){
                 algorithmMode = splitCipher[2];
             }
             if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
-                paramSetID = splitCipher[0].match(/\d{3}/g);
+                paramSetID = splitCipher[0].match(digitRegexp);
                 classicalSecLvl = parseInt(paramSetID);
                 algorithmMode = splitCipher[1];
             }
         }
         else{
-            if(cipherString.match(/\d{3,}/g)){
-                paramSetID = cipherString.match(/\d{3,}/g);
+            if(cipherString.match(digitRegexp)){
+                paramSetID = cipherString.match(digitRegexp);
                 classicalSecLvl = parseInt(paramSetID);
             }
         }
@@ -115,3 +115,10 @@ console.log('Classical security level : ', classicalSecLvl);
 console.log('Algorithm mode : ' + algorithmMode);
 
 }
+
+/*
+const alg1 = createCipher('aes-128-cbc-hmac-sha1');    
+const alg2 = createCipheriv('bf');
+const alg3 = createDecipheriv('aes128');
+const alg4 = createDecipher('aes192');
+*/

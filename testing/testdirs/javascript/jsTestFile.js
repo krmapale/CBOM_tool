@@ -1,4 +1,4 @@
-/*
+
 import fs from 'node:fs';
 import path from 'node:path'; 
 import { argv } from 'node:process';
@@ -66,19 +66,27 @@ const key25 = generateKeys();
 
 // CERT
 const cert1 = new X509Certificate();
-*/
-const crypto = require('crypto');
-
-//const arr10 = crypto.getCipherInfo();
-const arr11 = crypto.getCiphers();
-console.log(arr11);
-//const arr12 = crypto.getCurves();
-//console.log(arr12);
-//const arr13 = crypto.getDiffieHellman();
-//const arr14 = crypto.getFips();
-const arr15 = crypto.getHashes();
-console.log(arr15);
-//const arr16 = crypto.getRandomValues();
 
 
 
+//---------------------------------------------- proper test values below -----------------------------------
+
+const algtest1 = createCipher('aes-128-cbc-hmac-sha256');    
+const algtest2 = createCipheriv('aes128');
+const algtest3 = createDecipheriv('aes-256-cfb1');
+const algtest4 = createDecipher('bf-ecb');
+const algtest5 = createCipher('camellia-128-cbc');    
+const algtest6 = createCipheriv('blowfish');
+const algtest7 = createDecipheriv('des-cbc');
+const algtest8 = createDecipher('des-ede3-cfb1');
+const algtest9 = createCipher('des3');    
+const algtest10 = createCipheriv('id-aes192-wrap');
+const algtest11 = createDecipheriv('id-smime-alg-CMS3DESwrap');
+const algtest12 = createDecipher('rc4-hmac-md5');
+const algtest13 = createCipher('id-aes256-GCM');    
+const algtest14 = createCipheriv('rc2-64-cbc');
+const algtest15 = createDecipheriv('seed-cbc');
+const algtest16 = createDecipher('camellia256');
+
+
+//---------------------------------------------- proper test values above -----------------------------------

@@ -119,3 +119,9 @@ console.log('Nist quantum security level for '+ firstParam +  ' : ', nistQTsecLv
 //console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[0] + ', property value: ' , nistQTsecLvl.levelZero.level);
 //console.log('Property key: ' + Object.keys(nistQTsecLvl.levelZero)[1] + ', property values: ', JSON.stringify(nistQTsecLvl.levelZero.algorithms));
 
+
+
+const alg1 = createCipher('camellia-128-cfb8');    
+const alg2 = createCipheriv('camellia128');
+const alg3 = createDecipheriv('camellia256');
+const alg4 = createDecipher('des-ede3');

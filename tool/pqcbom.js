@@ -112,6 +112,7 @@ function createBomFile(filename, dirPath){
         console.log("");
     });
 
+    
     fs.readFile(filename, 'utf-8' ,(err, data) => {
         if (err) throw err;
         console.log('fs.readfile data: ' + data);
@@ -153,11 +154,11 @@ function scanDirectory(directoryPath) {
                     //console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
 
                     if(components != null || components != undefined){
-                        components.forEach(component => {
-                            console.log('silmukan sisällä');
-                            componentObjects.push(component); 
-                            //console.log('comparray: ' + JSON.stringify(componentObjects));
-                        });
+                        if(componentObjects.length <= 0){
+                            componentObjects = components;
+                        } else {
+                            componentObjects = componentObjects.concat(components);
+                        }
                     }
                 }
             }
@@ -190,12 +191,15 @@ function getComponents(filePath, fileExtension){
         nodeCryptoObj.importRegexp.forEach((regexpItem) => {
 
             // Checks if any matches on Node crypto library are found.
-            if(fileContent.match(regexpItem) != null){
+            if(fileContent.match(regexpItem)){
+                libFound = true;
+
+                // Below only for testing
                 const tmpArray = fileContent.match(regexpItem);
                 tmpArray.forEach(element => {
                     console.log('Found import: ' + element);
                 });
-                libFound = true;
+
             }
         }); 
         
@@ -211,13 +215,13 @@ function getComponents(filePath, fileExtension){
         if(libFound){
             console.log('Node Crypto library found!');
 
-            const setOfAlgRegexpMatches = new Set();
-            const setOfCryptMatRegexpMatches = new Set();
-            const setOfCertRegexpMatches = new Set();
+            let setOfAlgRegexpMatches = new Set();
+            let setOfCryptMatRegexpMatches = new Set();
+            let setOfCertRegexpMatches = new Set();
             
             setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent);
             setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent);
-            setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent); // NOT TESTED
+            setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent); 
 
             if(setOfAlgRegexpMatches.size > 0){
                 setOfAlgRegexpMatches.forEach(regexpMatch => {
@@ -263,13 +267,26 @@ function getComponents(filePath, fileExtension){
  * @returns a set-object of regexp matches from the scanned file
  */
 function findNodeCryptoComponents(searchElementsArray, fileContent){
-    const tmpArray = new Array();
-    searchElementsArray.forEach(element => {
-        const tmpRegexp = new RegExp(`((^(crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
-        tmpArray.push(fileContent.match(tmpRegexp));
-    });
 
-    const tmpSet = new Set(tmpArray);
+    let tmpMatchArray = new Array();
+
+    try {
+        searchElementsArray.forEach(element => {
+            const tmpRegexp = new RegExp(`((^(crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+            if(fileContent.match(tmpRegexp)){
+                tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
+            }
+        });
+    } catch (error) {
+        console.error('Error finding Node Crypto components:', error);
+    }
+
+
+    const tmpSet = new Set(tmpMatchArray);
+    if(tmpSet.size > 0){
+        console.log("findNodeCryptoComponents functions tmpSet: " , tmpSet);
+    }
+
 
     return tmpSet;
 }
@@ -300,8 +317,7 @@ function checkFileExtension(fileExtension){
  */
 function extractFirstParameter(regexpMatchString){
 
-
-    let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('(')+1, regexpMatchString.indexOf(',')-1);
+    let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('\'')+1, regexpMatchString.lastIndexOf('\''));
     let firstParamTrim = firstParam.trim();
 
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
@@ -311,10 +327,8 @@ function extractFirstParameter(regexpMatchString){
         firstParamTrim = firstParamTrim.replaceAll(/\'|\"/g , '');
     }
     else {
-        firstParamTrim = "UNABLE TO READ VARIABLE"; // If no string parameter is found, a variable has probably been used instead. TODO: create a fix for gathering information from variables?
-    }
-
-    return firstParamTrim;
+        return firstParamTrim;
+    }    
 }
 
 
@@ -332,6 +346,7 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
     let classicalSecLvl = undefined;
     let nistQTsecLvl = undefined;
     let algorithmMode = undefined;
+    const digitRegexp = new RegExp(/\d{3,}/, "g");
  
 
     let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
@@ -340,28 +355,29 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
 
     // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
     // to the components attributes.
-    let ciphers = crypto.getCiphers(); //TODO: think about how to add NIST quantum security levels
+    let ciphers = crypto.getCiphers(); 
     for (let cipher of ciphers){
-        if(firstParam.match(cipher)){
-            //let cipherString = cipher.replaceAll(/\'|\"/g , '');
-            if(cipherString.includes('-')){
-                const splitCipher = cipher.split('-');
-                if(splitCipher[1].match(/\d{3,}/g)){
-                    paramSetID = splitCipher[1].match(/\d{3,}/g);
-                    classicalSecLvl = parseInt(paramSetID);
+        if(firstParam.match(cipher)){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
+            let cipherString = cipher.replaceAll(/\'|\"/g , '');    // remove quotes
+            if(cipherString.includes('-')){                         // if cipher name is divided by '-'
+                const splitCipher = cipher.split('-');              // split into parts
+                if(splitCipher[1].match(digitRegexp)){              // if the first part contains 3 or more digits
+                    paramSetID = splitCipher[1].match(digitRegexp); // set the digits as value for paramSetID
+                    classicalSecLvl = parseInt(paramSetID);         // use the same digits to give an integer value for classicalSecLvl
                 }
-                if(splitCipher.length > 2){
-                    algorithmMode = splitCipher[2];
+                if(splitCipher.length > 2){                         // if the cipher string has atleast 3 parts
+                    algorithmMode = splitCipher[2];                 // make an assumption that the third part defines the algorithm mode, -which it often does
                 }
+                // if the first split part mathces aes plus three or more digits and the second part matches "wrap"
                 if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
-                    paramSetID = splitCipher[0].match(/\d{3}/g);
-                    classicalSecLvl = parseInt(paramSetID);
-                    algorithmMode = splitCipher[1];
+                    paramSetID = splitCipher[0].match(digitRegexp); // set digit value
+                    classicalSecLvl = parseInt(paramSetID);         // set digit int value
+                    algorithmMode = splitCipher[1];                 // set wrap as mode, even though might be incorrect?
                 }
             }
-            else{
-                if(cipherString.match(/\d{3,}/g)){
-                    paramSetID = cipherString.match(/\d{3,}/g);
+            else{ // if the above conditions didn't match, check if the cipherString contains three or more digits and set those as values
+                if(cipherString.match(digitRegexp)){
+                    paramSetID = cipherString.match(digitRegexp);
                     classicalSecLvl = parseInt(paramSetID);
                 }
             }
@@ -373,19 +389,14 @@ function addComponent(filePath, cryptoAssetType, regexpMatchString){
         if(regexpMatchString.match(hash)){
             return hash.replaceAll(/\'|\"/g , '');
         }
-    });
+    }); //TODO: continue on this
 
-    crypto.getCurves().forEach(curve => {
-        if(regexpMatchString.match(curve)){
-            return curve.replaceAll(/\'|\"/g , '');
-        }
-    });
     
 
-    if(firstParam != null & firstParam.match(/\d+/g)){ 
-        paramSetID = firstParam.match(/\d+/g);  // HUOM. JOS tulee kaksi lukua niin tässä kohtaa voi tulla ongelmaa
-        classicalSecLvl = parseInt(paramSetID);
-        //nistQTsecLvl = getNistQuantumSecLevel(paramSetID);
+
+    //Make sure paramSetID is string, not an array object as it comes out from match-function
+    if(paramSetID != undefined){
+        paramSetID = paramSetID.toString();
     }
 
 
