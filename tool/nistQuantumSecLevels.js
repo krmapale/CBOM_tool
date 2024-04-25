@@ -7,6 +7,7 @@ export class NistQuantumSecLevel{
             // < AES 128, DES, SHA-224, RSA/DH-2048, ECC 224,
             'DES',
             'SHA-224',
+            'SHA3-224',
             'RSA-2048',
             'DH-2048',
             'ECC-224'
@@ -59,7 +60,8 @@ export class NistQuantumSecLevel{
                 'AES-256',
                 'KYBER-1024',
                 'ECC-512',
-                'SHA-512'
+                'SHA-512',
+                'SHA3-512'
             ]
         } 
         this.levelSix = {

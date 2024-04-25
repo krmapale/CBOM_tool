@@ -175,17 +175,21 @@ function scanDirectory(directoryPath) {
 
 /**
  * Searches for cryptographic components within a given file. First checks if file extension type is supported. 
+ * Initially works on Javascript and TypeScript files only, but will be expanded to other filetypes later on. 
  * @param {Path to file} filePath 
  * @param {Files extension} fileExtension 
  * @returns an array of cryptographic components
  */
 function getComponents(filePath, fileExtension){
     const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const nodeCryptoObj = new NodeCrypto(); // create a NodeCrypto object that is used to retreive regexpes
     let libFound = false;
     let components = new Array(); // add found components to this array
 
-    if(fileExtension == '.js' | fileExtension == '.ts'){
+
+    // Currently crypto components can only be gotten from these filetypes. 
+    if(fileExtension == '.js' || fileExtension == '.ts'){
+
+        const nodeCryptoObj = new NodeCrypto(); // create a NodeCrypto object that is used to retreive regexpes
 
         // NodeCrypto.importRegexp has an array of regexpes that match importing from Node crypto library
         nodeCryptoObj.importRegexp.forEach((regexpItem) => {
@@ -219,25 +223,29 @@ function getComponents(filePath, fileExtension){
             let setOfCryptMatRegexpMatches = new Set();
             let setOfCertRegexpMatches = new Set();
             
+            // get all the node crypto library's method calls that are relevant for creating cryptographic components. 
+            // currently no duplicates are added. TODO: think if duplicates should be ok?
             setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent);
             setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent);
             setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent); 
 
+            // go through all found method calls, create a crypto component from the method calls first parameter values and 
+            // add component to components-list. 
             if(setOfAlgRegexpMatches.size > 0){
                 setOfAlgRegexpMatches.forEach(regexpMatch => {
-                    components.push(addComponent(filePath, 'algorithm', regexpMatch));
+                    components.push(addComponent(filePath, fileExtension, 'algorithm', regexpMatch));
                 });
 
             }
             if(setOfCryptMatRegexpMatches.size > 0){
                 setOfCryptMatRegexpMatches.forEach(regexpMatch => {
-                    components.push(addComponent(filePath, 'related-crypto-material', regexpMatch));
+                    components.push(addComponent(filePath, fileExtension, 'related-crypto-material', regexpMatch));
                 });
 
             }
             if(setOfCertRegexpMatches.size > 0){
                 setOfCertRegexpMatches.forEach(regexpMatch => {
-                    components.push(addComponent(filePath, 'certification', regexpMatch));
+                    components.push(addComponent(filePath, fileExtension, 'certification', regexpMatch));
                 });
 
             }
@@ -311,7 +319,7 @@ function checkFileExtension(fileExtension){
 
 
 /**
- * Extract the first parameter from a method call. 
+ * Extract the first parameter from a method call. Works on javascript/typescript(?)
  * @param {A string that contains data about a crypto method call and it's first parameter} regexpMatchString 
  * @returns trimmed version of method calls first param
  */
@@ -323,7 +331,7 @@ function extractFirstParameter(regexpMatchString){
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
     }
-    if(firstParamTrim.match(/^\'(\w+)(-(\w*))*\'$/) | firstParamTrim.match(/^\"(\w+)(-(\w*))*\"$/)){
+    if(firstParamTrim.match(/^\'(\w+)(-(\w*))*\'$/) || firstParamTrim.match(/^\"(\w+)(-(\w*))*\"$/)){
         firstParamTrim = firstParamTrim.replaceAll(/\'|\"/g , '');
     }
     else {
@@ -338,58 +346,87 @@ function extractFirstParameter(regexpMatchString){
  * @param {Specifies the type of cryptographic asset} cryptoAssetType 
  * @returns a cycloneDX cryptographic component
  */
-function addComponent(filePath, cryptoAssetType, regexpMatchString){
+function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchString){
 
+    let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
+    const digitRegexp = new RegExp(/\d{3,}/, "g");
 
     let firstParam = extractFirstParameter(regexpMatchString); // retreives the parameter name from the method call (regexMatchString)
     let paramSetID = undefined;
     let classicalSecLvl = undefined;
     let nistQTsecLvl = undefined;
     let algorithmMode = undefined;
-    const digitRegexp = new RegExp(/\d{3,}/, "g");
- 
 
-    let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
-    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam); // NOTE: in instances like this: aes-256-cbc-hmac-sha256 just returns the quantum sec level of the first algorithm it finds.
+    
 
+    if(fileExtension == '.js' || fileExtension == '.ts'){
+        // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
+        // to the components attributes.
+        let ciphers = crypto.getCiphers(); 
+        for (let cipher of ciphers){
+            if(cipher.match(firstParam)){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
+                if(cipher.includes('-')){                               // if cipher name is divided by '-'
+                    const splitCipher = cipher.split('-');              // split into parts
+                    if(splitCipher[1].match(digitRegexp)){              // if the first part contains 3 or more digits
+                        paramSetID = splitCipher[1].match(digitRegexp); // set the digits as value for paramSetID
+                        classicalSecLvl = parseInt(paramSetID);         // use the same digits to give an integer value for classicalSecLvl
+                    }
+                    if(splitCipher.length > 2){                         // if the cipher string has atleast 3 parts
+                        algorithmMode = splitCipher[2];                 // make an assumption that the third part defines the algorithm mode, -which it often does
+                    }
+                    // if the first split part mathces aes plus three or more digits and the second part matches "wrap"
+                    if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
+                        paramSetID = splitCipher[0].match(digitRegexp); // set digit value
+                        classicalSecLvl = parseInt(paramSetID);         // set digit int value
+                        algorithmMode = splitCipher[1];                 // set wrap as mode, even though might be incorrect?
+                    }
+                }
+                else{ // if the above conditions didn't match, check if the cipherString contains three or more digits and set those as values
+                    if(cipher.match(digitRegexp)){
+                        paramSetID = cipher.match(digitRegexp);
+                        classicalSecLvl = parseInt(paramSetID);
+                    }
+                }
 
-    // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
-    // to the components attributes.
-    let ciphers = crypto.getCiphers(); 
-    for (let cipher of ciphers){
-        if(firstParam.match(cipher)){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
-            let cipherString = cipher.replaceAll(/\'|\"/g , '');    // remove quotes
-            if(cipherString.includes('-')){                         // if cipher name is divided by '-'
-                const splitCipher = cipher.split('-');              // split into parts
-                if(splitCipher[1].match(digitRegexp)){              // if the first part contains 3 or more digits
-                    paramSetID = splitCipher[1].match(digitRegexp); // set the digits as value for paramSetID
-                    classicalSecLvl = parseInt(paramSetID);         // use the same digits to give an integer value for classicalSecLvl
+                // This part below is for cases like 'aes-256-cbc-hmac-sha256', where two three digit algorithms are found.
+                // The NIST quantun security level algorithm would just find the quantum security level based on either 
+                // algorithms that first match a specific defined string within the NistQuantumSecLevel-class. 
+                // Therefore, we split the algorithm string so that we get the NIST qt sec level only from the first
+                // three digit algorithm that was found within the string, as it is often the one that is more relevant. 
+                const threeDigitsArray = firstParam.match(digitRegexp);
+                if(threeDigitsArray != null && threeDigitsArray.length > 1){
+                    const digits = firstParam.match(digitRegexp);
+                    const firstParamUpToFirstThreeDigits = firstParam.slice(0, firstParam.indexOf(digits[0])+digits[0].length);
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParamUpToFirstThreeDigits);
                 }
-                if(splitCipher.length > 2){                         // if the cipher string has atleast 3 parts
-                    algorithmMode = splitCipher[2];                 // make an assumption that the third part defines the algorithm mode, -which it often does
+                else{
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
                 }
-                // if the first split part mathces aes plus three or more digits and the second part matches "wrap"
-                if(splitCipher[0].match(/aes\d{3,}/g) && splitCipher[1].match(/wrap/g)){
-                    paramSetID = splitCipher[0].match(digitRegexp); // set digit value
-                    classicalSecLvl = parseInt(paramSetID);         // set digit int value
-                    algorithmMode = splitCipher[1];                 // set wrap as mode, even though might be incorrect?
-                }
+
+                break;
             }
-            else{ // if the above conditions didn't match, check if the cipherString contains three or more digits and set those as values
-                if(cipherString.match(digitRegexp)){
-                    paramSetID = cipherString.match(digitRegexp);
+        }
+
+        let hashes = crypto.getHashes();
+        for(let hash of hashes){
+            if(hash.match(firstParam)){
+                const hashDigitsMatch = hash.match(digitRegexp);
+                if(hashDigitsMatch != null){
+                    paramSetID = hashDigitsMatch[0];
                     classicalSecLvl = parseInt(paramSetID);
+                } 
+                if(hash.includes("RSA") || hash.includes("rsassa")){
+                    nistQTsecLvl = 0;
                 }
+                else { //TODO: käy läpi testit
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(hash);
+                }
+                break;
             }
-            break;
         }
     }
 
-    crypto.getHashes().forEach(hash => {
-        if(regexpMatchString.match(hash)){
-            return hash.replaceAll(/\'|\"/g , '');
-        }
-    }); //TODO: continue on this
+
 
     
 

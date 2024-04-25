@@ -1,6 +1,6 @@
 
 
-
+/*
 const testArray = [
     'crypto.createPrivateKey(\'asdasdad\')', //match
     'crypto.createPrivateKey(\'asda-sdad\')', //match
@@ -54,15 +54,16 @@ if(digits.match(/\d+/g)){
     console.log('match! : ' + digits.match(/\d+/g));
 }
 
-
+*/
 
 const crypto = require('crypto');
 let ciphers = crypto.getCiphers();
 
+/*
 ciphers.forEach(element => {
     testGetCiphers(element, ciphers);
 });
-
+*/
 
 //testGetCiphers('aes256-wrap', ciphers);
 
@@ -80,8 +81,7 @@ for (let cipher of ciphers){
     if(cipher.match(regexpMatchString)){
         console.log('match found! ' + regexpMatchString + ' : ' + regexpMatchString.match(cipher));
         //console.log(cipher);
-        let cipherString = cipher.replaceAll(/\'|\"/g , '');
-        if(cipherString.includes('-')){
+        if(cipher.includes('-')){
             const splitCipher = cipher.split('-');
             console.log(splitCipher[0]);
             console.log(splitCipher[1]);
@@ -99,8 +99,8 @@ for (let cipher of ciphers){
             }
         }
         else{
-            if(cipherString.match(digitRegexp)){
-                paramSetID = cipherString.match(digitRegexp);
+            if(cipher.match(digitRegexp)){
+                paramSetID = cipher.match(digitRegexp);
                 classicalSecLvl = parseInt(paramSetID);
             }
         }
@@ -116,9 +116,8 @@ console.log('Algorithm mode : ' + algorithmMode);
 
 }
 
-/*
+
 const alg1 = createCipher('aes-128-cbc-hmac-sha1');    
 const alg2 = createCipheriv('bf');
 const alg3 = createDecipheriv('aes128');
 const alg4 = createDecipher('aes192');
-*/
