@@ -131,39 +131,64 @@ function createBomFile(filename, dirPath){
 function scanDirectory(directoryPath) {
 
     try{
-        const files = fs.readdirSync(directoryPath);
+        directoryPath = path.normalize(directoryPath);
+        const fileStats = fs.lstatSync(directoryPath);
+  
+        if(!path.isAbsolute(directoryPath) && fileStats.isFile()){ // if path isn't absolute, lets make it. (Might needs some fixing and testing still).
+            directoryPath = path.join(process.cwd(), path.basename(directoryPath));
+            const fileExtName =  path.extname(directoryPath);
+            console.log(directoryPath);
+            if(checkFileExtension(fileExtName)){
+                console.log('Supported file type: ' + fileExtName);
+                let foundComponents = getComponents(directoryPath, fileExtName);
+                //console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
 
-        files.forEach(file => {
-
-            const filePath = path.join(directoryPath, file);
-
-            const isDir = fs.statSync(filePath).isDirectory();
-
-            if (isDir) {
-                console.log('---Is directory. Keep scanning: ' + filePath);
-                scanDirectory(filePath); // Recursively scan subdirectory
-
-            } else {
-                console.log('---Not a directory: ' + filePath); // Log file path
-                const fileExtension = path.extname(filePath);
-
-                // If file extension is supported..
-                if(checkFileExtension(fileExtension)){
-                    console.log('Supported file type: ' + fileExtension);
-                    let components = getComponents(filePath, fileExtension);
-                    //console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
-
-                    if(components != null || components != undefined){
-                        if(componentObjects.length <= 0){
-                            componentObjects = components;
-                        } else {
-                            componentObjects = componentObjects.concat(components);
-                        }
+                if(foundComponents != null || foundComponents != undefined){
+                    if(componentObjects.length <= 0){
+                        componentObjects = foundComponents;
+                    } else {
+                        componentObjects = componentObjects.concat(foundComponents);
                     }
                 }
             }
-        });
+        }
+        if (fileStats.isDirectory()) { //TODO: jatka tästä, joku tässä ei toimi. Tarkoitus olisi pystyä skannaamaan yksittäisiä filuja
+            const files = fs.readdirSync(directoryPath);
 
+            files.forEach(file => {
+    
+                const filePath = path.join(directoryPath, file);
+    
+                const isDir = fs.statSync(filePath).isDirectory();
+    
+                if (isDir) {
+                    console.log('---Is directory. Keep scanning: ' + filePath);
+                    scanDirectory(filePath); // Recursively scan subdirectory
+    
+                } else {
+                    console.log('---Not a directory: ' + filePath); // Log file path
+                    const fileExtension = path.extname(filePath);
+    
+                    // If file extension is supported..
+                    if(checkFileExtension(fileExtension)){
+                        console.log('Supported file type: ' + fileExtension);
+                        let components = getComponents(filePath, fileExtension);
+                        //console.log('Retrevied components: ' + JSON.stringify(components) + ' from ' + filePath);
+    
+                        if(components != null || components != undefined){
+                            if(componentObjects.length <= 0){
+                                componentObjects = components;
+                            } else {
+                                componentObjects = componentObjects.concat(components);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            console.log("Path not found! " + directoryPath);
+        }
     } catch (error) {
         console.error('Error scanning directory:', error);
     }
