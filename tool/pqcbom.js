@@ -47,8 +47,9 @@ const args = yargs(hideBin(argv))
 
 
 
-
-//TODO: do testing
+if(Object.keys(args).length === 2){ //if no args are given
+    createBomFile(args.o, process.cwd());
+}
 if(args.i){
     createBomFile(args.o, args.i);
 }
@@ -58,10 +59,8 @@ if(args.git){
 if(args.docker){
     createBomFile(args.o, args.docker);
 }
-else{
-    createBomFile(args.o, process.cwd());
-}
 
+ 
 
 
 /**
@@ -76,7 +75,7 @@ function createBomFile(filename, dirPath){
         filename = "bom.json";
     }
     else {
-        const filenameCleaned = filename.replace(/[/\\?%*:.|"<>]/g, '-');
+        const filenameCleaned = filename.replace(/[/\\?%*:.|"<>\/]/g, '-');
         filename = filenameCleaned.concat(fileNameExtension);
     }
 
@@ -104,7 +103,7 @@ function createBomFile(filename, dirPath){
         components: new Array(scanDirectory(dirPath))
     }
 
-    
+    // TODO: read current filedirectories filenames and make sure there will be no duplicates/permission issues
     fs.writeFile(filename, JSON.stringify(bomObj, false, 2), (err) => {
         if (err) throw err;
         console.log("");
@@ -113,10 +112,12 @@ function createBomFile(filename, dirPath){
     });
 
     
-    fs.readFile(filename, 'utf-8' ,(err, data) => {
-        if (err) throw err;
-        console.log('fs.readfile data: ' + data);
-      }); 
+    fs.chmod(filename, 0o777, () => {
+        fs.readFile(filename, 'utf-8' ,(err, data) => {
+            if (err) throw err;
+            console.log('fs.readfile data: ' + data);
+          }); 
+    })
     
 }
 
@@ -133,9 +134,13 @@ function scanDirectory(directoryPath) {
     try{
         directoryPath = path.normalize(directoryPath);
         const fileStats = fs.lstatSync(directoryPath);
-  
-        if(!path.isAbsolute(directoryPath) && fileStats.isFile()){ // if path isn't absolute, lets make it. (Might needs some fixing and testing still).
-            directoryPath = path.join(process.cwd(), path.basename(directoryPath));
+
+        if(fileStats.isFile() && !directoryPath.includes('/') && !directoryPath.includes('\\') && !path.isAbsolute(directoryPath)){ 
+            //directoryPath = path.join(process.cwd(), path.basename(directoryPath));
+            directoryPath = fs.realpathSync(directoryPath);
+
+        }
+        if(fileStats.isFile() && path.isAbsolute(directoryPath)){
             const fileExtName =  path.extname(directoryPath);
             console.log(directoryPath);
             if(checkFileExtension(fileExtName)){
@@ -153,8 +158,8 @@ function scanDirectory(directoryPath) {
             }
         }
         if (fileStats.isDirectory()) { //TODO: jatka tästä, joku tässä ei toimi. Tarkoitus olisi pystyä skannaamaan yksittäisiä filuja
+            
             const files = fs.readdirSync(directoryPath);
-
             files.forEach(file => {
     
                 const filePath = path.join(directoryPath, file);
@@ -185,9 +190,6 @@ function scanDirectory(directoryPath) {
                     }
                 }
             });
-        }
-        else {
-            console.log("Path not found! " + directoryPath);
         }
     } catch (error) {
         console.error('Error scanning directory:', error);
@@ -262,6 +264,7 @@ function getComponents(filePath, fileExtension){
                 });
 
             }
+            //TODO? Currently not setting the values at addComponent for related-crypto-materials
             if(setOfCryptMatRegexpMatches.size > 0){
                 setOfCryptMatRegexpMatches.forEach(regexpMatch => {
                     components.push(addComponent(filePath, fileExtension, 'related-crypto-material', regexpMatch));
@@ -511,9 +514,9 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 state: undefined, //"active",
                 size: undefined, //2048,
                 algorithmRef: undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
-                securedBy: {
-                  mechanism: undefined, //"None"
-                },
+                //securedBy: {
+                //  mechanism: undefined, //"None"
+                //},
                 creationDate: undefined, //"2016-11-21T08:00:00Z",
                 activationDate: undefined, //"2016-11-21T08:20:00Z"
             }
