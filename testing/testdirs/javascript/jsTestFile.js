@@ -71,6 +71,7 @@ const cert1 = new X509Certificate();
 
 //---------------------------------------------- proper test values below -----------------------------------
 
+// Ciphers
 const algtest1 = createCipher('aes-128-cbc-hmac-sha256');    
 const algtest2 = createCipheriv('aes128');
 const algtest3 = createDecipheriv('aes-256-cfb1');
@@ -89,21 +90,21 @@ const algtest15 = createDecipheriv('seed-cbc');
 const algtest16 = createDecipher('camellia256');
 
 
-
-const shatest11 = crypto.createCipheriv('RSA-RIPEMD160')
-const shatest12 = crypto.createDecipheriv('RSA-SHA1-2')
-const shatest13 = crypto.createCipher('RSA-SHA224')
-const shatest14 = crypto.createDecipher('RSA-SHA3-256')
-const shatest15 = crypto.createSign('RSA-SHA3-384')
-const shatest16 = crypto.createVerify('RSA-SHA3-512')
-const shatest17 = crypto.createHmac('RSA-SHA384')
-const shatest18 = crypto.createHash('RSA-SHA512/224')
-const shatest25 = crypto.createDiffieHellman('blake2s256')
-const shatest26 = crypto.createECDH('id-rsassa-pkcs1-v1_5-with-sha3-256')
-const shatest27 = crypto.createSecretKeyBuffer('sha224WithRSAEncryption')
-const shatest28 = crypto.createPublicKey('sha3-224')
-const shatest29 = crypto.createPrivateKey('sha384WithRSAEncryption')
-const shatest30 = crypto.createX509Certificate('sha512-224WithRSAEncryption')
+//Hashes
+const shatest1 = crypto.createCipheriv('RSA-RIPEMD160')
+const shatest2 = crypto.createDecipheriv('RSA-SHA1-2')
+const shatest3 = crypto.createCipher('RSA-SHA224')
+const shatest4 = crypto.createDecipher('RSA-SHA3-256')
+const shatest5 = crypto.createSign('RSA-SHA3-384')
+const shatest6 = crypto.createVerify('RSA-SHA3-512')
+const shatest7 = crypto.createHmac('RSA-SHA384')
+const shatest8 = crypto.createHash('RSA-SHA512/224')
+const shatest9 = crypto.createDiffieHellman('blake2s256')
+const shatest10 = crypto.createECDH('id-rsassa-pkcs1-v1_5-with-sha3-256')
+const shatest11 = crypto.createSecretKeyBuffer('sha224WithRSAEncryption')
+const shatest12 = crypto.createPublicKey('sha3-224')
+const shatest13 = crypto.createPrivateKey('sha384WithRSAEncryption')
+const shatest14 = crypto.createX509Certificate('sha512-224WithRSAEncryption')
 
 
 //---------------------------------------------- proper test values above -----------------------------------

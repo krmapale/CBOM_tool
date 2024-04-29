@@ -60,6 +60,7 @@ export class NodeCrypto {
     }
 }
 
+//TODO: later. No time for now. 
 export class WebCryptoAPI { 
     constructor() {
         this.methods = [ // window.crypto.subtle.<below method>

@@ -73,18 +73,24 @@ function createBomFile(filename, dirPath){
     const fileNameExtension = '.json';
     if(filename == undefined){
         filename = "bom.json";
+
+        // This part is for making sure that no files are overwriten.
+        const filesInWorkDir = fs.readdirSync(process.cwd());
+        if(filesInWorkDir.includes(filename)){
+            console.log(filename + " already exists!");
+            const fname = filename.slice(0, filename.lastIndexOf("."));
+            const fextension = path.extname(filename);
+            const time = getTime();
+            filename = fname + time.getMilliseconds() + fextension;
+            console.log("Changing name to: " + filename);
+        }
     }
     else {
+        // TODO: this still needs more work. Just a quick solution, not tested enough.
         const filenameCleaned = filename.replace(/[/\\?%*:.|"<>\/]/g, '-');
         filename = filenameCleaned.concat(fileNameExtension);
     }
 
-    // testing---------------------------------
-    const obj = {
-        name: 'component'
-    }
-    const tmparray = [obj,obj,obj];
-    // testing-----------------------------
 
     // Create JS bom-object.
     const bomObj = {
@@ -103,7 +109,8 @@ function createBomFile(filename, dirPath){
         components: new Array(scanDirectory(dirPath))
     }
 
-    // TODO: read current filedirectories filenames and make sure there will be no duplicates/permission issues
+
+
     fs.writeFile(filename, JSON.stringify(bomObj, false, 2), (err) => {
         if (err) throw err;
         console.log("");
@@ -112,12 +119,12 @@ function createBomFile(filename, dirPath){
     });
 
     
-    fs.chmod(filename, 0o777, () => {
-        fs.readFile(filename, 'utf-8' ,(err, data) => {
-            if (err) throw err;
-            console.log('fs.readfile data: ' + data);
-          }); 
-    })
+
+    fs.readFile(filename, 'utf-8' ,(err, data) => {
+        if (err) throw err;
+        console.log('fs.readfile data: ' + data);
+      }); 
+
     
 }
 
@@ -384,6 +391,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
     let classicalSecLvl = undefined;
     let nistQTsecLvl = undefined;
     let algorithmMode = undefined;
+    let relatedCryptoMaterialSize = undefined;
 
     
 
@@ -509,10 +517,10 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
             break;
         case 'related-crypto-material': 
             component.cryptoProperties.relatedCryptoMaterialProperties = {
-                type: undefined, //"public-key",
+                type: undefined, //"public-key", TODO
                 id: undefined, //"2e9ef09e-dfac-4526-96b4-d02f31af1b22",
                 state: undefined, //"active",
-                size: undefined, //2048,
+                size: relatedCryptoMaterialSize, //2048,
                 algorithmRef: undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
                 //securedBy: {
                 //  mechanism: undefined, //"None"
