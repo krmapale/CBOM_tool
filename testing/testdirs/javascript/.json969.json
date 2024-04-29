@@ -2,7 +2,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "metadata": {
-    "timestamp": "2024-04-28T12:32:15.689Z",
+    "timestamp": "2024-04-29T10:03:03.970Z",
     "component": {
       "type": "application",
       "name": "PQCBOM tool",
@@ -193,9 +193,7 @@
         },
         "cryptoProperties": {
           "assetType": "algorithm",
-          "algorithmProperties": {
-            "mode": "cbc"
-          }
+          "algorithmProperties": {}
         }
       },
       {
@@ -264,9 +262,7 @@
         },
         "cryptoProperties": {
           "assetType": "algorithm",
-          "algorithmProperties": {
-            "nistQuantumSecurityLevel": 0
-          }
+          "algorithmProperties": {}
         }
       },
       {
@@ -370,9 +366,7 @@
         },
         "cryptoProperties": {
           "assetType": "algorithm",
-          "algorithmProperties": {
-            "mode": "md5"
-          }
+          "algorithmProperties": {}
         }
       },
       {
@@ -583,9 +577,7 @@
         },
         "cryptoProperties": {
           "assetType": "related-crypto-material",
-          "relatedCryptoMaterialProperties": {
-            "securedBy": {}
-          }
+          "relatedCryptoMaterialProperties": {}
         }
       },
       {
@@ -597,9 +589,7 @@
         },
         "cryptoProperties": {
           "assetType": "related-crypto-material",
-          "relatedCryptoMaterialProperties": {
-            "securedBy": {}
-          }
+          "relatedCryptoMaterialProperties": {}
         }
       },
       {
@@ -611,9 +601,7 @@
         },
         "cryptoProperties": {
           "assetType": "related-crypto-material",
-          "relatedCryptoMaterialProperties": {
-            "securedBy": {}
-          }
+          "relatedCryptoMaterialProperties": {}
         }
       },
       {
@@ -625,9 +613,7 @@
         },
         "cryptoProperties": {
           "assetType": "related-crypto-material",
-          "relatedCryptoMaterialProperties": {
-            "securedBy": {}
-          }
+          "relatedCryptoMaterialProperties": {}
         }
       }
     ]
