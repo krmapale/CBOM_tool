@@ -74,7 +74,7 @@ function createBomFile(filename, dirPath){
     if(filename == undefined){
         filename = "bom.json";
 
-        // This part is for making sure that no files are overwriten.
+        // This part is for making sure that no files are overwriten (or no permission problems arise)
         const filesInWorkDir = fs.readdirSync(process.cwd());
         if(filesInWorkDir.includes(filename)){
             console.log(filename + " already exists!");
@@ -164,7 +164,7 @@ function scanDirectory(directoryPath) {
                 }
             }
         }
-        if (fileStats.isDirectory()) { //TODO: jatka tästä, joku tässä ei toimi. Tarkoitus olisi pystyä skannaamaan yksittäisiä filuja
+        if (fileStats.isDirectory()) { 
             
             const files = fs.readdirSync(directoryPath);
             files.forEach(file => {
@@ -256,12 +256,12 @@ function getComponents(filePath, fileExtension){
             let setOfAlgRegexpMatches = new Set();
             let setOfCryptMatRegexpMatches = new Set();
             let setOfCertRegexpMatches = new Set();
-            
+
             // get all the node crypto library's method calls that are relevant for creating cryptographic components. 
             // currently no duplicates are added. TODO: think if duplicates should be ok?
-            setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent);
-            setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent);
-            setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent); 
+            setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent, 'algorithm');
+            setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent, 'relatedCryptoMaterial');
+            setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent, 'certificate'); 
 
             // go through all found method calls, create a crypto component from the method calls first parameter values and 
             // add component to components-list. 
@@ -309,17 +309,31 @@ function getComponents(filePath, fileExtension){
  * @param {Content of the file that is being scanned} fileContent 
  * @returns a set-object of regexp matches from the scanned file
  */
-function findNodeCryptoComponents(searchElementsArray, fileContent){
+function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName){
 
     let tmpMatchArray = new Array();
 
     try {
-        searchElementsArray.forEach(element => {
-            const tmpRegexp = new RegExp(`((^(crypto|diffieHellman|ecdh)\\.)|\\s*)\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
-            if(fileContent.match(tmpRegexp)){
-                tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
-            }
-        });
+        switch(propertyName){
+            case 'algorithm':
+                searchElementsArray.forEach(element => {
+                    const tmpRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+                    if(fileContent.match(tmpRegexp)){
+                        tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
+                    }
+                });
+                break;
+            case 'relatedCryptoMaterial':
+                searchElementsArray.forEach(element => {
+                    const tmpRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'[^]*\\}\\)`, 'g');
+                    if(fileContent.match(tmpRegexp)){
+                        tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
+                    }
+                });
+                break;
+            case 'certificate':
+                break;         
+        }
     } catch (error) {
         console.error('Error finding Node Crypto components:', error);
     }

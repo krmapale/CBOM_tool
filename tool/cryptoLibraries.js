@@ -50,12 +50,12 @@ export class NodeCrypto {
         ]
         
         this.importRegexp = [
-            /\bimport\s+\*\s+as\s+crypto\s+from\s+['"][node:]?crypto['"]/g, // import * as crypto from 'crypto'
-            /\bimport\s+crypto\s+from\s+['"][node:]?crypto['"]/g, // import crypto from 'crypto'
-            /\bimport\s+{\s*\w+\s*}\s+from\s+['"][node:]?crypto['"]/g, // import { "anything" } from 'crypto'
-            /\bimport\s+[\w*\s{},]*\s+from\s+['"][node:]?crypto['"]/g, // import crypto, { createHash } from 'crypto'
+            /\bimport\s+\*\s+as\s+crypto\s+from\s+['"](node:)?crypto['"]/g, // import * as crypto from 'crypto'
+            /\bimport\s+crypto\s+from\s+['"](node:)?crypto['"]/g, // import crypto from 'crypto'
+            /\bimport\s+{\s*\w+\s*}\s+from\s+['"](node:)?crypto['"]/g, // import { "anything" } from 'crypto'
+            /\bimport\s+[\w*\s{},]*\s+from\s+['"](node:)?crypto['"]/g, // import crypto, { createHash } from 'crypto'
          ];
-        this.requireRegexp = /\brequire\s*\(\s*['"][node:]?crypto['"]\s*\)/g; // require('crypto')
+        this.requireRegexp = /\brequire\s*\(\s*['"](node:)?crypto['"]\s*\)/g; // require('node:crypto')
         
     }
 }
