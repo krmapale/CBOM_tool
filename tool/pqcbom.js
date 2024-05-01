@@ -390,14 +390,16 @@ function checkFileExtension(fileExtension){
  */
 function extractFirstParameter(regexpMatchString){
 
-    let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('\'')+1, regexpMatchString.lastIndexOf('\''));
-    let firstParamTrim = firstParam.trim();
+    //let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('\'')+1, regexpMatchString.lastIndexOf('\''));
+    let firstParam = regexpMatchString.match(/\((\'|\"){0,1}[\w-]*(\'|\"){0,1}(,|\))/g);
+    let firstParamTrim = firstParam[0].replace(/[\(\),]/g, "").trim();
 
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
     }
     if(firstParamTrim.match(/^\'(\w+)(-(\w*))*\'$/) || firstParamTrim.match(/^\"(\w+)(-(\w*))*\"$/)){
-        firstParamTrim = firstParamTrim.replaceAll(/\'|\"/g , '');
+        firstParamTrim = firstParamTrim.replace(/\'|\"/g , '');
+        return firstParamTrim;
     }
     else {
         return firstParamTrim;
@@ -425,8 +427,11 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
 
     
 
+    //TODO: TÄMÄ OSIO TÄYTYY MUOKATA MODULAARISEMMAKSI. Tarkistetaan tiedoston pääte, sekä cryptoAssetType ja poimitaan tiedot tilanteen vaatimalla tavalla. 
     if(fileExtension == '.js' || fileExtension == '.ts'){
-        // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
+
+        if(cryptoAssetType == 'algorithm'){
+// This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
         // to the components attributes.
         let ciphers = crypto.getCiphers(); 
         for (let cipher of ciphers){
@@ -484,13 +489,19 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 if(hash.includes("RSA") || hash.includes("rsassa")){
                     nistQTsecLvl = 0;
                 }
-                else { //TODO: käy läpi testit
+                else { 
                     nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(hash);
                 }
                 break;
             }
         }
+        }
+        if(cryptoAssetType == 'related-crypto-material'){
+            //TODO: continue here. Extract data from regexMatchString. Look at relatedCryptoMatTestFile.js for 
+            //references. 
+        }
     }
+        
 
 
 
