@@ -317,17 +317,33 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
         switch(propertyName){
             case 'algorithm':
                 searchElementsArray.forEach(element => {
-                    const tmpRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
-                    if(fileContent.match(tmpRegexp)){
-                        tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
+                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+                    if(fileContent.match(algorithmRegexp)){
+                        const algMatchArray = fileContent.match(algorithmRegexp);
+                        if(tmpMatchArray.length <= 0){
+                            algMatchArray.forEach(match => {
+                                tmpMatchArray.push(match);
+                            });
+                        }
+                        else{
+                            tmpMatchArray = tmpMatchArray.concat(algMatchArray);
+                        }
                     }
                 });
                 break;
             case 'relatedCryptoMaterial':
                 searchElementsArray.forEach(element => {
-                    const tmpRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'[^]*\\}\\)`, 'g');
-                    if(fileContent.match(tmpRegexp)){
-                        tmpMatchArray = tmpMatchArray.concat(fileContent.match(tmpRegexp));
+                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
+                    if(fileContent.match(relCryptMatRegexp)){
+                        const relCryptMatMatchArray = fileContent.match(relCryptMatRegexp);
+                        if(tmpMatchArray.length <= 0){
+                            relCryptMatMatchArray.forEach(match => {
+                                tmpMatchArray.push(match);
+                            });
+                        }
+                        else{
+                            tmpMatchArray = tmpMatchArray.concat(relCryptMatMatchArray);
+                        }
                     }
                 });
                 break;
@@ -339,13 +355,13 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
     }
 
 
-    const tmpSet = new Set(tmpMatchArray);
-    if(tmpSet.size > 0){
-        console.log("findNodeCryptoComponents functions tmpSet: " , tmpSet);
+    const returnSet = new Set(tmpMatchArray);
+    if(returnSet.size > 0){
+        console.log("findNodeCryptoComponents functions tmpSet: " , returnSet);
     }
 
 
-    return tmpSet;
+    return returnSet;
 }
 
 
