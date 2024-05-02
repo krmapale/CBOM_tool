@@ -317,7 +317,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
         switch(propertyName){
             case 'algorithm':
                 searchElementsArray.forEach(element => {
-                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'`, 'g');
+                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(['"](\\w+)(-(\\w*))*['"]`, 'g');
                     if(fileContent.match(algorithmRegexp)){
                         const algMatchArray = fileContent.match(algorithmRegexp);
                         if(tmpMatchArray.length <= 0){
@@ -333,7 +333,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
                 break;
             case 'relatedCryptoMaterial':
                 searchElementsArray.forEach(element => {
-                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\('(\\w+)(-(\\w*))*'\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
+                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\((\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
                     if(fileContent.match(relCryptMatRegexp)){
                         const relCryptMatMatchArray = fileContent.match(relCryptMatRegexp);
                         if(tmpMatchArray.length <= 0){
@@ -394,6 +394,14 @@ function extractFirstParameter(regexpMatchString){
     let firstParam = regexpMatchString.match(/\((\'|\"){0,1}[\w-]*(\'|\"){0,1}(,|\))/g);
     let firstParamTrim = firstParam[0].replace(/[\(\),]/g, "").trim();
 
+    if(firstParam == null && regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*',/g) || regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*',/g)){
+        if(regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*',/g)){
+            //TODO: mieti miten tehdään... generateKey({ name: 'HMAC'}) esimerkki
+        }   
+        if(regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*',/g)){
+
+        }
+    }
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
     }
@@ -415,6 +423,7 @@ function extractFirstParameter(regexpMatchString){
  */
 function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchString){
 
+    let nodeCryptoObject = new NodeCrypto();
     let NistQTSecLevelClassInstance = new NistQuantumSecLevel();
     const digitRegexp = new RegExp(/\d{3,}/, "g");
 
@@ -499,6 +508,38 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
         if(cryptoAssetType == 'related-crypto-material'){
             //TODO: continue here. Extract data from regexMatchString. Look at relatedCryptoMatTestFile.js for 
             //references. 
+
+            if(Object.keys(nodeCryptoObject.diffieHellmanGroup.groups).includes(firstParam)){
+                relatedCryptoMaterialSize = nodeCryptoObject.diffieHellmanGroup.groups[firstParam];
+                console.log(relatedCryptoMaterialSize);
+            }
+            if(regexpMatchString.match(/\bmodulusLength\s*:\s*\d+/g)){
+                const modRegexp = regexpMatchString.match(/\bmodulusLength\s*:\s*\d+/g);
+                const modLengthDigits = modRegexp[0].match(/\d+/g);
+                try {
+                    relatedCryptoMaterialSize = parseInt(modLengthDigits[0]);
+                } catch (error){
+                    console.error(error);
+                }
+            }
+            if(regexpMatchString.match(/\blength\s*:\s*\d+/g)){
+                const lengthRegexp = regexpMatchString.match(/\blength\s*:\s*\d+/g);
+                const lengthDigits = lengthRegexp[0].match(/\d+/g);
+                try {
+                    relatedCryptoMaterialSize = parseInt(lengthDigits[0]);
+                } catch (error){
+                    console.error(error);
+                }
+            }
+            if(regexpMatchString.match(/\bnamedCurve\s*:\s*['"\w\d-]*\s*,/g)){
+                const namedCurve = regexpMatchString.match(/\bnamedCurve\s*:\s*['"\w\d-]*\s*,/g);
+                const curveDigits = namedCurve[0].match(/\d{3}/g);
+                try {
+                    relatedCryptoMaterialSize = parseInt(curveDigits[0]);
+                } catch (error){
+                    console.error(error);
+                }
+            }
         }
     }
         
