@@ -49,6 +49,20 @@ export class NodeCrypto {
             'new X509Certificate'         //new X509Certificate(buffer)
         ]
         
+        this.diffieHellmanGroup = {
+            name : "diffieHellmanGroup",
+            groups : {
+                modp1 : 768,
+                modp2 : 1024,
+                modp5 : 1536,
+                modp14 : 2048,
+                modp15 : 3072,
+                modp16 : 4096,
+                modp17 : 6144,
+                modp18 : 8192
+            }
+        }
+
         this.importRegexp = [
             /\bimport\s+\*\s+as\s+crypto\s+from\s+['"](node:)?crypto['"]/g, // import * as crypto from 'crypto'
             /\bimport\s+crypto\s+from\s+['"](node:)?crypto['"]/g, // import crypto from 'crypto'
