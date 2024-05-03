@@ -29,6 +29,7 @@ export class NistQuantumSecLevel{
             level : 2, 
             algorithms : [ // strong  
                 'SHA256',
+                'SHA-256',
                 'SHA3-256',
             ]
         }
@@ -49,6 +50,7 @@ export class NistQuantumSecLevel{
             level : 4,
             algorithms : [ // very strong
                 'SHA384',
+                'SHA-384',
                 'SHA3-384'
             ]
         }
@@ -60,6 +62,7 @@ export class NistQuantumSecLevel{
                 'AES-256',
                 'KYBER-1024',
                 'ECC-512',
+                'SHA512',
                 'SHA-512',
                 'SHA3-512'
             ]

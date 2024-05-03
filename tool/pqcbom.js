@@ -3,7 +3,7 @@
 
 
 import fs from 'node:fs';
-import path from 'node:path'; 
+import path, { parse } from 'node:path'; 
 import { argv } from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
@@ -271,7 +271,6 @@ function getComponents(filePath, fileExtension){
                 });
 
             }
-            //TODO? Currently not setting the values at addComponent for related-crypto-materials
             if(setOfCryptMatRegexpMatches.size > 0){
                 setOfCryptMatRegexpMatches.forEach(regexpMatch => {
                     components.push(addComponent(filePath, fileExtension, 'related-crypto-material', regexpMatch));
@@ -317,7 +316,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
         switch(propertyName){
             case 'algorithm':
                 searchElementsArray.forEach(element => {
-                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(['"](\\w+)(-(\\w*))*['"]`, 'g');
+                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(['"](\\w+)(-(\\w*))*['"](,|\\))`, 'g');
                     if(fileContent.match(algorithmRegexp)){
                         const algMatchArray = fileContent.match(algorithmRegexp);
                         if(tmpMatchArray.length <= 0){
@@ -336,14 +335,22 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
                     const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\((\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
                     if(fileContent.match(relCryptMatRegexp)){
                         const relCryptMatMatchArray = fileContent.match(relCryptMatRegexp);
-                        if(tmpMatchArray.length <= 0){
-                            relCryptMatMatchArray.forEach(match => {
-                                tmpMatchArray.push(match);
-                            });
-                        }
-                        else{
-                            tmpMatchArray = tmpMatchArray.concat(relCryptMatMatchArray);
-                        }
+                        relCryptMatMatchArray.forEach(matchElement => {
+                            if(matchElement.match(/\bhash\s*:\s*'[\w\d-]*',/g)){
+                                const hashMatches = matchElement.match(/\bhash\s*:\s*'[\w\d-]*',/g);
+                                hashMatches.forEach(hashMatch => {
+                                    tmpMatchArray.push(hashMatch);
+                                });
+                            }
+                            if(matchElement.match(/\bcipher\s*:\s*'[\w\d-]*'/g)){
+                                const cipherMatches = matchElement.match(/\bcipher\s*:\s*'[\w\d-]*',/g);
+                                cipherMatches.forEach(cipherMatch => {
+                                    tmpMatchArray.push(cipherMatch);
+                                });
+                            }
+                            tmpMatchArray.push(matchElement);
+                        });
+
                     }
                 });
                 break;
@@ -391,17 +398,39 @@ function checkFileExtension(fileExtension){
 function extractFirstParameter(regexpMatchString){
 
     //let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('\'')+1, regexpMatchString.lastIndexOf('\''));
-    let firstParam = regexpMatchString.match(/\((\'|\"){0,1}[\w-]*(\'|\"){0,1}(,|\))/g);
-    let firstParamTrim = firstParam[0].replace(/[\(\),]/g, "").trim();
+    let firstParam = regexpMatchString.match(/\((\'|\"{0,1})[\w\d-]*(\'|\"){0,1}(,|\))/g);
+    let firstParamTrim;
 
-    if(firstParam == null && regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*',/g) || regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*',/g)){
-        if(regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*',/g)){
-            //TODO: mieti miten tehdään... generateKey({ name: 'HMAC'}) esimerkki
-        }   
-        if(regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*',/g)){
-
+    if(firstParam == null){  
+        if(regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*'/g)){
+            const nameParam = regexpMatchString.match(/\bname\s*:\s*'[\w]*'/g)
+            firstParam = nameParam[0].match(/['"]{1}[\w]*['"]{1}/g);
+            firstParamTrim = firstParam[0].replace(/\'|\"/g , '');
+            return firstParamTrim;
+        }
+        if(regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*'/g)){
+            const hashParam = regexpMatchString.match(/\bhash\s*:\s*'[\w\d-]*'/g)
+            firstParam = hashParam[0].match(/['"]{1}[\w\d-]*['"]{1}/g);
+            firstParamTrim = firstParam[0].replace(/'|"/g , '');
+            return firstParamTrim;
+        }
+        if(regexpMatchString.match(/\bcipher\s*:\s*'[\w\d-]*'/g)){
+            const cipherParam = regexpMatchString.match(/\bcipher\s*:\s*'[\w\d-]*'/g)
+            firstParam = cipherParam[0].match(/['"]{1}[\w\d-]*['"]{1}/g);
+            firstParamTrim = firstParam[0].replace(/'|"/g , '');
+            return firstParamTrim;
         }
     }
+
+    if(firstParam == null){
+        console.log("error extracting first parameter from: ", regexpMatchString);
+    }
+    else {
+        firstParamTrim = firstParam[0].replace(/[\(\),]/g, "").trim();
+    }
+
+
+    //TODO: test this
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
     }
@@ -413,6 +442,8 @@ function extractFirstParameter(regexpMatchString){
         return firstParamTrim;
     }    
 }
+
+//TODO: TEST scenarios when only digits are given as param. Also go through bom.json and add NIST qt lvl for RSA-4096, also check des not showing nist qt lvl?
 
 
 /**
@@ -506,18 +537,33 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
         }
         }
         if(cryptoAssetType == 'related-crypto-material'){
-            //TODO: continue here. Extract data from regexMatchString. Look at relatedCryptoMatTestFile.js for 
-            //references. 
+            //NOTE: currently this extracts only algorithm data as it is most relevant to thesis.
+            // This will need to be edited back to create related crypto material components. 
+            cryptoAssetType = 'algorithm'; //Changing this to algorithm as a temporary fix. Modify later.
 
+            // If getNistQuantumSecLevel returns a proper value, this means that all the extractable information
+            // of the component can be found on the firstParam object.
+            if(NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam) != undefined){
+                nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
+                paramSetID = firstParam.match(digitRegexp);
+                classicalSecLvl = parseInt(paramSetID[0]);
+            }
             if(Object.keys(nodeCryptoObject.diffieHellmanGroup.groups).includes(firstParam)){
-                relatedCryptoMaterialSize = nodeCryptoObject.diffieHellmanGroup.groups[firstParam];
-                console.log(relatedCryptoMaterialSize);
+                classicalSecLvl = nodeCryptoObject.diffieHellmanGroup.groups[firstParam];
+                paramSetID = classicalSecLvl.toString();
+                nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel('DH-' + paramSetID);
+                //relatedCryptoMaterialSize = nodeCryptoObject.diffieHellmanGroup.groups[firstParam];
+                //console.log(relatedCryptoMaterialSize);
             }
             if(regexpMatchString.match(/\bmodulusLength\s*:\s*\d+/g)){
                 const modRegexp = regexpMatchString.match(/\bmodulusLength\s*:\s*\d+/g);
                 const modLengthDigits = modRegexp[0].match(/\d+/g);
                 try {
-                    relatedCryptoMaterialSize = parseInt(modLengthDigits[0]);
+                    paramSetID = modLengthDigits[0];
+                    classicalSecLvl = parseInt(modLengthDigits[0]);
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "-" + paramSetID);
+                    console.log(nistQTsecLvl);
+                    //relatedCryptoMaterialSize = parseInt(modLengthDigits[0]);
                 } catch (error){
                     console.error(error);
                 }
@@ -526,7 +572,10 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 const lengthRegexp = regexpMatchString.match(/\blength\s*:\s*\d+/g);
                 const lengthDigits = lengthRegexp[0].match(/\d+/g);
                 try {
-                    relatedCryptoMaterialSize = parseInt(lengthDigits[0]);
+                    paramSetID = lengthDigits[0];
+                    classicalSecLvl = parseInt(lengthDigits[0]);
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "-" + paramSetID);
+                    //relatedCryptoMaterialSize = parseInt(lengthDigits[0]);
                 } catch (error){
                     console.error(error);
                 }
@@ -535,7 +584,15 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 const namedCurve = regexpMatchString.match(/\bnamedCurve\s*:\s*['"\w\d-]*\s*,/g);
                 const curveDigits = namedCurve[0].match(/\d{3}/g);
                 try {
-                    relatedCryptoMaterialSize = parseInt(curveDigits[0]);
+                    paramSetID = curveDigits[0];
+                    classicalSecLvl = parseInt(curveDigits[0]);
+                    if(firstParam == 'ec'){
+                        nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "c" + "-" + paramSetID);
+                    }
+                    else {
+                        nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "-" + paramSetID);
+                    }
+                    //relatedCryptoMaterialSize = parseInt(curveDigits[0]);
                 } catch (error){
                     console.error(error);
                 }
@@ -585,6 +642,21 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 nistQuantumSecurityLevel: nistQTsecLvl 
             }
             break;
+            
+        case 'related-crypto-material': 
+        component.cryptoProperties.relatedCryptoMaterialProperties = {
+            type: undefined, //"public-key", TODO
+            id: undefined, //"2e9ef09e-dfac-4526-96b4-d02f31af1b22",
+            state: undefined, //"active",
+            size: relatedCryptoMaterialSize, //2048,
+            algorithmRef: undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
+            //securedBy: {
+            //  mechanism: undefined, //"None"
+            //},
+            creationDate: undefined, //"2016-11-21T08:00:00Z",
+            activationDate: undefined, //"2016-11-21T08:20:00Z"
+        }
+        break;
         case 'certificate':
             component.cryptoProperties.certificateProperties = {
                 subjectName:  undefined, //"CN = www.google.com",
@@ -595,20 +667,6 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 subjectPublicKeyRef: undefined, //"crypto/key/rsa-2048@1.2.840.113549.1.1.1",
                 certificateFormat: undefined, //"X.509",
                 certificateExtension: undefined, //"crt"
-            }
-            break;
-        case 'related-crypto-material': 
-            component.cryptoProperties.relatedCryptoMaterialProperties = {
-                type: undefined, //"public-key", TODO
-                id: undefined, //"2e9ef09e-dfac-4526-96b4-d02f31af1b22",
-                state: undefined, //"active",
-                size: relatedCryptoMaterialSize, //2048,
-                algorithmRef: undefined, //"crypto/algorithm/rsa-2048@1.2.840.113549.1.1.1",
-                //securedBy: {
-                //  mechanism: undefined, //"None"
-                //},
-                creationDate: undefined, //"2016-11-21T08:00:00Z",
-                activationDate: undefined, //"2016-11-21T08:20:00Z"
             }
             break;
         case 'protocol':
