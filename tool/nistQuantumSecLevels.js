@@ -6,6 +6,7 @@ export class NistQuantumSecLevel{
             algorithms : [ // very weak
             // < AES 128, DES, SHA-224, RSA/DH-2048, ECC 224,
             'DES',
+            'SHA224',
             'SHA-224',
             'SHA3-224',
             'RSA-2048',
@@ -24,7 +25,8 @@ export class NistQuantumSecLevel{
                 'ECC-256'        
             ]
         } 
-
+        //TODO: this whole list needs more algorithms and the search needs to be modified to automatically
+        // check the value regardless of char ´-´
         this.levelTwo = {
             level : 2, 
             algorithms : [ // strong  

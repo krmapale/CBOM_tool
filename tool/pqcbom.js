@@ -74,9 +74,10 @@ function createBomFile(filename, dirPath){
 
     //TODO: test if this works
     const fileNameExtension = '.json';
-    if(filename == undefined){
+    if(filename == undefined || !filename.match(/[\w+|\d+]/g)){
         filename = "bom.json";
-
+        console.log("Filename undefined or contains only special characters!");
+        console.log("Rewriting filename to: " + filename);
         // This part is for making sure that no files are overwriten (or no permission problems arise)
         const filesInWorkDir = fs.readdirSync(process.cwd());
         if(filesInWorkDir.includes(filename)){
@@ -478,7 +479,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
         // to the components attributes.
         let ciphers = crypto.getCiphers(); 
         for (let cipher of ciphers){
-            if(cipher.match(firstParam)){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
+            if(cipher.match(`^${firstParam}$`, "g")){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
                 if(cipher.includes('-')){                               // if cipher name is divided by '-'
                     const splitCipher = cipher.split('-');              // split into parts
                     if(splitCipher[1].match(digitRegexp)){              // if the first part contains 3 or more digits
@@ -547,7 +548,12 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
             // If getNistQuantumSecLevel returns a proper value, this means that all the extractable information
             // of the component can be found on the firstParam object.
             if(NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam) != undefined){
-                nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
+                if(firstParam.match(/RSA|rsassa/g)){
+                    nistQTsecLvl = 0;
+                }
+                else{
+                    nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
+                }
                 paramSetID = firstParam.match(digitRegexp);
                 classicalSecLvl = parseInt(paramSetID[0]);
             }

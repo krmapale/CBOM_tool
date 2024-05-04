@@ -105,7 +105,7 @@ const shatest10 = crypto.createECDH('id-rsassa-pkcs1-v1_5-with-sha3-256');
 const shatest11 = crypto.createSecretKeyBuffer('sha224WithRSAEncryption');
 const shatest12 = crypto.createPublicKey('sha3-224');
 const shatest13 = crypto.createPrivateKey('sha384WithRSAEncryption');
-const shatest14 = crypto.createX509Certificate('sha512-224WithRSAEncryption');
+const shatest14 = crypto.createX509Certificate('sha512-224WithRSAEncryption'); //Not working yet
 const shatest15 = crypto.createDiffieHellman(1024);
 
 //---------------------------------------------- proper test values above -----------------------------------

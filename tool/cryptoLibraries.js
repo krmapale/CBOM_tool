@@ -35,6 +35,7 @@ export class NodeCrypto {
             'createPrivateKey',          //crypto.createPrivateKey(key)
             'createPublicKey',           //crypto.createPublicKey(key)
             'createSecretKey',           //crypto.createSecretKey(key[, encoding])
+            'createSecretKeyBuffer',     //crypto.createSecretKeyBuffer('sha224WithRSAEncryption');
             'createDiffieHellman',       // createDiffieHellman(2048)
             'createDiffieHellmanGroup',  //crypto.createDiffieHellmanGroup(name)
             'getDiffieHellman',          // crypto.getDiffieHellman(groupName)
