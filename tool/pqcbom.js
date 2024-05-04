@@ -320,7 +320,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
         switch(propertyName){
             case 'algorithm':
                 searchElementsArray.forEach(element => {
-                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(['"](\\w+)(-(\\w*))*['"](,|\\))`, 'g');
+                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((['"](\\w+)(-(\\w*))*['"]))(,|\\))`, 'g');
                     if(fileContent.match(algorithmRegexp)){
                         const algMatchArray = fileContent.match(algorithmRegexp);
                         if(tmpMatchArray.length <= 0){
@@ -336,7 +336,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
                 break;
             case 'relatedCryptoMaterial':
                 searchElementsArray.forEach(element => {
-                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\((\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
+                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((\\d+)|\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
                     if(fileContent.match(relCryptMatRegexp)){
                         const relCryptMatMatchArray = fileContent.match(relCryptMatRegexp);
                         relCryptMatMatchArray.forEach(matchElement => {
@@ -434,6 +434,9 @@ function extractFirstParameter(regexpMatchString){
     }
 
 
+    if(firstParamTrim == undefined){
+        console.log(firstParamTrim);
+    }
     //TODO: test this
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
@@ -524,7 +527,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
 
         let hashes = crypto.getHashes();
         for(let hash of hashes){
-            if(hash.match(firstParam)){
+            if(hash.match(`^${firstParam}$`, "g")){
                 const hashDigitsMatch = hash.match(digitRegexp);
                 if(hashDigitsMatch != null){
                     paramSetID = hashDigitsMatch[0];
@@ -607,7 +610,17 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 }
             }
             if(paramSetID == undefined && classicalSecLvl == undefined){
-                if(firstParam.match(digitRegexp)){
+                // This is to check if firstParam is only digits, which is possible with createDiffieHellman() for example
+                if(firstParam.match(`^\\d{3,}$`, "g")){
+                    const digitFirstParam = firstParam.match(`^\\d{3,}$`, "g");
+                    paramSetID = digitFirstParam[0];
+                    classicalSecLvl = parseInt(paramSetID);
+                    if(regexpMatchString.includes("createDiffieHellman")){
+                        firstParam = "DH-"+paramSetID;
+                    }
+                }
+                // This is to retrieve digits from first param when other methods didn't find algorithm matches
+                else if(firstParam.match(digitRegexp)){
                     const digits = firstParam.match(digitRegexp);
                     paramSetID = digits[0];
                     classicalSecLvl = parseInt(paramSetID);
