@@ -125,3 +125,9 @@ const alg1 = createCipher('camellia-128-cfb8');
 const alg2 = createCipheriv('camellia128');
 const alg3 = createDecipheriv('camellia256');
 const alg4 = createDecipher('des-ede3');
+
+const hmac = createHmac('sha256', 'a secret');
+const string = 'Node.js';
+console.log(crypto.hash('sha1', string));
+const base64 = 'Tm9kZS5qcw==';
+console.log(crypto.hash('sha1', Buffer.from(base64, 'base64'), 'buffer'));

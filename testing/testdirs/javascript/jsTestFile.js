@@ -26,8 +26,8 @@ const alg6 = createHmac('algorithm');
 const alg7 = createSign('algorithm');
 const alg8 = createVerify('algorithm');
 const alg9 = hash('algorithm');
-const alg10 = crypto.createCipher('algorithm');    
-const alg11 = crypto.createCipheriv('algorithm');
+const alg10 = crypto.createCipher(variable1);    // Method calls with variables are excluded currently
+const alg11 = crypto.createCipheriv(variable2);
 const alg12 = crypto.createDecipheriv('algorithm');
 const alg13 = crypto.createDecipher('algorithm');
 const alg14 = crypto.createHash('algorithm');
@@ -88,23 +88,24 @@ const algtest13 = createCipher('id-aes256-GCM');
 const algtest14 = createCipheriv('rc2-64-cbc');
 const algtest15 = createDecipheriv('seed-cbc');
 const algtest16 = createDecipher('camellia256');
+const algtest17 = createDecipher(2056);
 
 
 //Hashes
-const shatest1 = crypto.createCipheriv('RSA-RIPEMD160')
-const shatest2 = crypto.createDecipheriv('RSA-SHA1-2')
-const shatest3 = crypto.createCipher('RSA-SHA224')
-const shatest4 = crypto.createDecipher('RSA-SHA3-256')
-const shatest5 = crypto.createSign('RSA-SHA3-384')
-const shatest6 = crypto.createVerify('RSA-SHA3-512')
-const shatest7 = crypto.createHmac('RSA-SHA384')
-const shatest8 = crypto.createHash('RSA-SHA512/224')
-const shatest9 = crypto.createDiffieHellman('blake2s256')
-const shatest10 = crypto.createECDH('id-rsassa-pkcs1-v1_5-with-sha3-256')
-const shatest11 = crypto.createSecretKeyBuffer('sha224WithRSAEncryption')
-const shatest12 = crypto.createPublicKey('sha3-224')
-const shatest13 = crypto.createPrivateKey('sha384WithRSAEncryption')
-const shatest14 = crypto.createX509Certificate('sha512-224WithRSAEncryption')
-
+const shatest1 = crypto.createCipheriv('RSA-RIPEMD160');
+const shatest2 = crypto.createDecipheriv('RSA-SHA1-2');
+const shatest3 = crypto.createCipher('RSA-SHA224');
+const shatest4 = crypto.createDecipher('RSA-SHA3-256');
+const shatest5 = crypto.createSign('RSA-SHA3-384');
+const shatest6 = crypto.createVerify('RSA-SHA3-512');
+const shatest7 = crypto.createHmac('RSA-SHA384');
+const shatest8 = crypto.createHash('RSA-SHA512/224');
+const shatest9 = crypto.createDiffieHellman('blake2s256');
+const shatest10 = crypto.createECDH('id-rsassa-pkcs1-v1_5-with-sha3-256');
+const shatest11 = crypto.createSecretKeyBuffer('sha224WithRSAEncryption');
+const shatest12 = crypto.createPublicKey('sha3-224');
+const shatest13 = crypto.createPrivateKey('sha384WithRSAEncryption');
+const shatest14 = crypto.createX509Certificate('sha512-224WithRSAEncryption');
+const shatest15 = crypto.createDiffieHellman(1024);
 
 //---------------------------------------------- proper test values above -----------------------------------

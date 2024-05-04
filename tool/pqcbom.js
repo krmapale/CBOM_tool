@@ -53,6 +53,9 @@ if(Object.keys(args).length === 2){ //if no args are given
 if(args.i){
     createBomFile(args.o, args.i);
 }
+if(args.o && !args.i){
+    createBomFile(args.o, process.cwd());
+}
 if(args.git){
     createBomFile(args.o, args.git);
 }
@@ -87,7 +90,7 @@ function createBomFile(filename, dirPath){
     }
     else {
         // TODO: this still needs more work. Just a quick solution, not tested enough.
-        const filenameCleaned = filename.replace(/[/\\?%*:.|"<>\/]/g, '-');
+        const filenameCleaned = filename.replace(/[\\?%*:.|"<>\/]/g, '-');
         filename = filenameCleaned.concat(fileNameExtension);
     }
 
@@ -492,9 +495,9 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                         algorithmMode = splitCipher[1];                 // set wrap as mode, even though might be incorrect?
                     }
                 }
-                else{ // if the above conditions didn't match, check if the cipherString contains three or more digits and set those as values
-                    if(cipher.match(digitRegexp)){
-                        paramSetID = cipher.match(digitRegexp);
+                else{ // if the above conditions didn't match, check if the firstParam contains three or more digits and set those as values
+                    if(firstParam.match(digitRegexp)){
+                        paramSetID = firstParam.match(digitRegexp);
                         classicalSecLvl = parseInt(paramSetID);
                     }
                 }
@@ -595,6 +598,13 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                     //relatedCryptoMaterialSize = parseInt(curveDigits[0]);
                 } catch (error){
                     console.error(error);
+                }
+            }
+            if(paramSetID == undefined && classicalSecLvl == undefined){
+                if(firstParam.match(digitRegexp)){
+                    const digits = firstParam.match(digitRegexp);
+                    paramSetID = digits[0];
+                    classicalSecLvl = parseInt(paramSetID);
                 }
             }
         }
