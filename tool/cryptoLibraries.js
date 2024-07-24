@@ -2,8 +2,8 @@
 
 export class NodeCrypto {
     constructor() {
-        this.classes = [ // <below class>.<some method> etc //TODO: think about class.method-combos that are relevant. Like sign, generateKey.. etc?
-            'cipher',
+        /*
+        this.classes = [ // NOT USED.
             'decipher',
             'diffieHellman',
             'ecdh',
@@ -17,7 +17,8 @@ export class NodeCrypto {
             'new X509Certificate',
             'x509',
             'crypto',
-        ];
+        ];*/
+
 
         this.algorithm = [               //methods
             'createCipher',              //crypto.createCipher('algorithm', ..)     these can be used without `crypto.` when imported

@@ -12,10 +12,8 @@ import { NistQuantumSecLevel } from './nistQuantumSecLevels.js';
 import crypto from 'crypto';
 
 
-let pqcbomVersion = '0.0.1';
+let pqcbomVersion = '1.0.0';
 var componentObjects = new Array();
-
-// node memo: new URL();
 
 
 const args = yargs(hideBin(argv))
@@ -24,7 +22,7 @@ const args = yargs(hideBin(argv))
         alias: 'input',
         description: 'Input directory path',
         requiresArg: true
-    })
+    })/*
     .option('git', {
         description: 'Git repo',
         requiresArg: true
@@ -32,7 +30,7 @@ const args = yargs(hideBin(argv))
     .option('docker', {
         description: 'Docker container',
         requiresArg: true
-    })
+    })*/    
     .option('o', {
         alias: 'output',
         description: 'Output file name',
@@ -65,16 +63,15 @@ if(args.docker){
 
  
 
-
 /**
- * Create bom.json file. 
- * TODO: TEST
+ * Creates the bom file based on given arguments and creates the header and metadata information for the bom file.
+ * @param {The name of the file that will be created} filename 
+ * @param {Scanned directory path} dirPath 
  */
 function createBomFile(filename, dirPath){
 
-    //TODO: test if this works
     const fileNameExtension = '.json';
-    if(filename == undefined || !filename.match(/[\w+|\d+]/g)){
+    if(filename === undefined || !filename.match(/[\w+|\d+]/g)){
         filename = "bom.json";
         console.log("Filename undefined or contains only special characters!");
         console.log("Rewriting filename to: " + filename);
@@ -90,8 +87,7 @@ function createBomFile(filename, dirPath){
         }
     }
     else {
-        // TODO: this still needs more work. Just a quick solution, not tested enough.
-        const filenameCleaned = filename.replace(/[\\?%*:.|"<>\/]/g, '-');
+       const filenameCleaned = filename.replace(/[\\?%*:.|"<>\/]/g, '-');
         filename = filenameCleaned.concat(fileNameExtension);
     }
 
@@ -109,7 +105,7 @@ function createBomFile(filename, dirPath){
             }
         },
 
-        // scanDirectory should return an array that contains javascript objects (components)
+        // scanDirectory returns an array that contains javascript objects (components)
         components: new Array(scanDirectory(dirPath))
     }
 
@@ -136,7 +132,7 @@ function createBomFile(filename, dirPath){
 
 
 /**
- * Recursively scans given directory.
+ * Recursively scans given directory for supported file types (Javascript files).
  * @param {Begins dir scanning from this path} directoryPath 
  * @returns an array of component objects
  */
@@ -213,7 +209,7 @@ function scanDirectory(directoryPath) {
 
 /**
  * Searches for cryptographic components within a given file. First checks if file extension type is supported. 
- * Initially works on Javascript and TypeScript files only, but will be expanded to other filetypes later on. 
+ * Initially works on Javascript files only, but will be expanded to other filetypes later on. 
  * @param {Path to file} filePath 
  * @param {Files extension} fileExtension 
  * @returns an array of cryptographic components
@@ -225,7 +221,7 @@ function getComponents(filePath, fileExtension){
 
 
     // Currently crypto components can only be gotten from these filetypes. 
-    if(fileExtension == '.js' || fileExtension == '.ts'){
+    if(fileExtension === '.js' ){ //|| fileExtension === '.ts'
 
         const nodeCryptoObj = new NodeCrypto(); // create a NodeCrypto object that is used to retreive regexpes
 
@@ -262,9 +258,10 @@ function getComponents(filePath, fileExtension){
             let setOfCertRegexpMatches = new Set();
 
             // get all the node crypto library's method calls that are relevant for creating cryptographic components. 
-            // currently no duplicates are added. TODO: think if duplicates should be ok?
+            // currently no duplicates are added. 
             setOfAlgRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.algorithm, fileContent, 'algorithm');
             setOfCryptMatRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.relatedCryptoMaterial, fileContent, 'relatedCryptoMaterial');
+            // NOTE: certificate extraction not functioning yet.
             setOfCertRegexpMatches = findNodeCryptoComponents(nodeCryptoObj.certificate, fileContent, 'certificate'); 
 
             // go through all found method calls, create a crypto component from the method calls first parameter values and 
@@ -291,13 +288,13 @@ function getComponents(filePath, fileExtension){
 
 
     }
-    if(fileExtension == '.py'){
+    if(fileExtension === '.py'){
         
     }
-    if(fileExtension == '.cs'){
+    if(fileExtension === '.cs'){
         
     }
-    if(fileExtension == '.java'){
+    if(fileExtension === '.java'){
         
     }
 
@@ -334,6 +331,10 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
                     }
                 });
                 break;
+            // NOTE: altough this section captures related crypto materials, in the addComponent-function all related crypto material components are 
+            // modified to be cryptographic algorithms because time and resources run out to make the tool function properly in terms of 
+            // related crypto materials. Therefore, this part captures only the cryptographic algorithms used in related crypto material 
+            // components and will be developed later on to capture more of the relevant data related to related crypto material components.
             case 'relatedCryptoMaterial':
                 searchElementsArray.forEach(element => {
                     const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((\\d+)|\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
@@ -359,7 +360,8 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
                 });
                 break;
             case 'certificate':
-                break;         
+                break;  
+                     
         }
     } catch (error) {
         console.error('Error finding Node Crypto components:', error);
@@ -386,7 +388,7 @@ function checkFileExtension(fileExtension){
     let tmpBool = false;
     const fileExtensions = ['.js', '.py', '.cs', '.java'] //TODO: add a lot more extensions and think of a better way to store these values?
     for (const element of fileExtensions){
-        if (element == fileExtension){
+        if (element === fileExtension){
             tmpBool = true;
         }
     }
@@ -405,7 +407,7 @@ function extractFirstParameter(regexpMatchString){
     let firstParam = regexpMatchString.match(/\((\'|\"{0,1})[\w\d-]*(\'|\"){0,1}(,|\))/g);
     let firstParamTrim;
 
-    if(firstParam == null){  
+    if(firstParam === null){  
         if(regexpMatchString.match(/\bname\s*:\s*'[\w\d-]*'/g)){
             const nameParam = regexpMatchString.match(/\bname\s*:\s*'[\w]*'/g)
             firstParam = nameParam[0].match(/['"]{1}[\w]*['"]{1}/g);
@@ -426,7 +428,7 @@ function extractFirstParameter(regexpMatchString){
         }
     }
 
-    if(firstParam == null){
+    if(firstParam === null){
         console.log("error extracting first parameter from: ", regexpMatchString);
     }
     else {
@@ -434,10 +436,9 @@ function extractFirstParameter(regexpMatchString){
     }
 
 
-    if(firstParamTrim == undefined){
+    if(firstParamTrim === undefined){
         console.log(firstParamTrim);
     }
-    //TODO: test this
     if(firstParamTrim.match(/^(?!['"])\d+$/)){ //checks if parameter is digits only and not surrounded by quotes
         return firstParamTrim; 
     }
@@ -449,8 +450,6 @@ function extractFirstParameter(regexpMatchString){
         return firstParamTrim;
     }    
 }
-
-//TODO: TEST scenarios when only digits are given as param. Also go through bom.json and add NIST qt lvl for RSA-4096, also check des not showing nist qt lvl?
 
 
 /**
@@ -474,15 +473,14 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
 
     
 
-    //TODO: TÄMÄ OSIO TÄYTYY MUOKATA MODULAARISEMMAKSI. Tarkistetaan tiedoston pääte, sekä cryptoAssetType ja poimitaan tiedot tilanteen vaatimalla tavalla. 
-    if(fileExtension == '.js' || fileExtension == '.ts'){
+    if(fileExtension === '.js' || fileExtension === '.ts'){
 
-        if(cryptoAssetType == 'algorithm'){
-// This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
+        if(cryptoAssetType === 'algorithm'){
+        // This section handles going through all possible node crypto library's cipher arguments and extracts wanted information 
         // to the components attributes.
         let ciphers = crypto.getCiphers(); 
         for (let cipher of ciphers){
-            if(cipher.match(`^${firstParam}$`, "g")){                               //if a method calls first parameter matches a cipher string from crypto.getCiphers()
+            if(cipher.match(`^${firstParam}$`, "g")){                   //if a method calls first parameter matches a cipher string from crypto.getCiphers()
                 if(cipher.includes('-')){                               // if cipher name is divided by '-'
                     const splitCipher = cipher.split('-');              // split into parts
                     if(splitCipher[1].match(digitRegexp)){              // if the first part contains 3 or more digits
@@ -543,7 +541,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
             }
         }
         }
-        if(cryptoAssetType == 'related-crypto-material'){
+        if(cryptoAssetType === 'related-crypto-material'){
             //NOTE: currently this extracts only algorithm data as it is most relevant to thesis.
             // This will need to be edited back to create related crypto material components. 
             cryptoAssetType = 'algorithm'; //Changing this to algorithm as a temporary fix. Modify later.
@@ -598,7 +596,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                 try {
                     paramSetID = curveDigits[0];
                     classicalSecLvl = parseInt(curveDigits[0]);
-                    if(firstParam == 'ec'){
+                    if(firstParam === 'ec'){
                         nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "c" + "-" + paramSetID);
                     }
                     else {
@@ -609,7 +607,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                     console.error(error);
                 }
             }
-            if(paramSetID == undefined && classicalSecLvl == undefined){
+            if(paramSetID === undefined && classicalSecLvl === undefined){
                 // This is to check if firstParam is only digits, which is possible with createDiffieHellman() for example
                 if(firstParam.match(`^\\d{3,}$`, "g")){
                     const digitFirstParam = firstParam.match(`^\\d{3,}$`, "g");
@@ -653,14 +651,11 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
             assetType: cryptoAssetType, 
         }
     }
-
-    
-
-    //TODO: Later fix this part to use a JSON file that contains information about the CycloneDX v1.6 cryptoProperties requirements and options. 
+ 
     switch (component.cryptoProperties.assetType){
         case 'algorithm':
             component.cryptoProperties.algorithmProperties = {
-                primitive: undefined, //TODO
+                primitive: undefined, 
                 parameterSetIdentifier: paramSetID, 
                 mode: algorithmMode,
                 executionEnvironment: undefined, 

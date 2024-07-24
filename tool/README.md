@@ -9,13 +9,12 @@ $ pqcbom -h
 
 Usage: 
     
-    pqcbom [OPTION] [SCAN DIRECTORY]
+    pqcbom [OPTION] [ARGUMENT]
 
 Options:
 
-    -i, --input                     Input type. Default file directory.
-        --git                       Git directory as input.
-        --docker                    Docker container as input.
+    -i, --input                     Input directory path 
+    -o, --output                    Output file name
     -h, --help                      Show help
     -v, --version                   Show version number
 

@@ -1,4 +1,7 @@
 
+ //TODO: this whole list needs more algorithms and the search needs to be modified to automatically
+// check the value regardless of char ´-´
+
 export class NistQuantumSecLevel{
     constructor(){
         this.levelZero = {
@@ -25,8 +28,6 @@ export class NistQuantumSecLevel{
                 'ECC-256'        
             ]
         } 
-        //TODO: this whole list needs more algorithms and the search needs to be modified to automatically
-        // check the value regardless of char ´-´
         this.levelTwo = {
             level : 2, 
             algorithms : [ // strong  
@@ -71,7 +72,7 @@ export class NistQuantumSecLevel{
         } 
         this.levelSix = {
             level : 6,
-            algorithms : [ // ?
+            algorithms : [ 
                 // ?
             ]
         } 
