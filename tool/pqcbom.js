@@ -111,7 +111,7 @@ function createBomFile(filename, dirPath){
 
 
 
-    fs.writeFile(filename, JSON.stringify(bomObj, false, 2), (err) => {
+    fs.writeFile(filename, JSON.stringify(bomObj, false, 2), {mode:0o666}, (err) => {
         if (err) throw err;
         console.log("");
         console.log("file " + filename + " created!");
