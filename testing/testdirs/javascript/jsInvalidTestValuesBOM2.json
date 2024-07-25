@@ -1,0 +1,124 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "metadata": {
+    "timestamp": "2024-07-25T10:59:08.242Z",
+    "component": {
+      "type": "application",
+      "name": "PQCBOM tool",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    [
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      },
+      {
+        "name": "invalidValue",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/jsInvalidTestValues.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {}
+        }
+      }
+    ]
+  ]
+}

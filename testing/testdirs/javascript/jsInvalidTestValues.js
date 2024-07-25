@@ -1,4 +1,4 @@
-
+import * as crypto from 'crypto'; 
 
 
 const alg1 = createCipher('invalidValue');    
