@@ -119,12 +119,12 @@ function createBomFile(filename, dirPath){
     });
 
     
-
+/*
     fs.readFile(filename, 'utf-8' ,(err, data) => {
         if (err) throw err;
         console.log('fs.readfile data: ' + data);
       }); 
-
+*/
     
 }
 
@@ -317,7 +317,7 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
         switch(propertyName){
             case 'algorithm':
                 searchElementsArray.forEach(element => {
-                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((['"](\\w+)(-(\\w*))*['"]))(,|\\))`, 'g');
+                    const algorithmRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((['"](\\w+)(-(\\w*))*(\\/\\w*)*['"]))(,|\\))`, 'g');
                     if(fileContent.match(algorithmRegexp)){
                         const algMatchArray = fileContent.match(algorithmRegexp);
                         if(tmpMatchArray.length <= 0){
@@ -404,7 +404,7 @@ function checkFileExtension(fileExtension){
 function extractFirstParameter(regexpMatchString){
 
     //let firstParam = regexpMatchString.slice(regexpMatchString.indexOf('\'')+1, regexpMatchString.lastIndexOf('\''));
-    let firstParam = regexpMatchString.match(/\((\'|\"{0,1})[\w\d-]*(\'|\"){0,1}(,|\))/g);
+    let firstParam = regexpMatchString.match(/\((\'|\"{0,1})[\w\d\/-]*(\'|\"){0,1}(,|\))/g);
     let firstParamTrim;
 
     if(firstParam === null){  
