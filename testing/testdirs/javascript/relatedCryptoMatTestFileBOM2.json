@@ -1,0 +1,248 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "metadata": {
+    "timestamp": "2024-07-30T15:21:19.089Z",
+    "component": {
+      "type": "application",
+      "name": "PQCBOM tool",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    [
+      {
+        "name": "modp14",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "modp16",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "4096",
+            "classicalSecurityLevel": 4096
+          }
+        }
+      },
+      {
+        "name": "SHA-256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 2
+          }
+        }
+      },
+      {
+        "name": "HMAC",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      },
+      {
+        "name": "hmac",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "512",
+            "classicalSecurityLevel": 512
+          }
+        }
+      },
+      {
+        "name": "id-aes256-GCM",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "rsa-pss",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "4096",
+            "classicalSecurityLevel": 4096
+          }
+        }
+      },
+      {
+        "name": "ec",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "239",
+            "classicalSecurityLevel": 239
+          }
+        }
+      },
+      {
+        "name": "rsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "aes-256-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "rsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "4096",
+            "classicalSecurityLevel": 4096
+          }
+        }
+      },
+      {
+        "name": "ec",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 1
+          }
+        }
+      },
+      {
+        "name": "dsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "4096",
+            "classicalSecurityLevel": 4096
+          }
+        }
+      },
+      {
+        "name": "rsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "hmac",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/relatedCryptoMatTestFile.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      }
+    ]
+  ]
+}
