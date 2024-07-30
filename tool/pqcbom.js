@@ -337,7 +337,8 @@ function findNodeCryptoComponents(searchElementsArray, fileContent, propertyName
             // components and will be developed later on to capture more of the relevant data related to related crypto material components.
             case 'relatedCryptoMaterial':
                 searchElementsArray.forEach(element => {
-                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((\\d+)|\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
+                    const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((\\d+)|\\{|(['"](\\w+)(-(\\w*))*["']))([\\s\\S]*?)((\\}\\))|(\\);))`, 'g');
+                    //const relCryptMatRegexp = new RegExp(`(^(crypto|diffieHellman|ecdh)\\.)|\\b${element}\\(((\\d+)|\\{|(['"](\\w+)(-(\\w*))*["']))\\s*[^;]*\\s*((\\}\\))|(\\);))`, 'g');
                     if(fileContent.match(relCryptMatRegexp)){
                         const relCryptMatMatchArray = fileContent.match(relCryptMatRegexp);
                         relCryptMatMatchArray.forEach(matchElement => {
@@ -572,7 +573,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                     paramSetID = modLengthDigits[0];
                     classicalSecLvl = parseInt(modLengthDigits[0]);
                     nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam + "-" + paramSetID);
-                    console.log(nistQTsecLvl);
+                    //console.log(nistQTsecLvl);
                     //relatedCryptoMaterialSize = parseInt(modLengthDigits[0]);
                 } catch (error){
                     console.error(error);
