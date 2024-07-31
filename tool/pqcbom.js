@@ -526,7 +526,8 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
 
         let hashes = crypto.getHashes();
         for(let hash of hashes){
-            if(hash.match(`^${firstParam}$`, "g")){
+            let tmpRegexp = new RegExp(`^${firstParam}$`, "gi");
+            if(hash.match(tmpRegexp)){
                 const hashDigitsMatch = hash.match(digitRegexp);
                 if(hashDigitsMatch != null){
                     paramSetID = hashDigitsMatch[0];
@@ -616,6 +617,7 @@ function addComponent(filePath, fileExtension, cryptoAssetType, regexpMatchStrin
                     classicalSecLvl = parseInt(paramSetID);
                     if(regexpMatchString.includes("createDiffieHellman")){
                         firstParam = "DH-"+paramSetID;
+                        nistQTsecLvl = NistQTSecLevelClassInstance.getNistQuantumSecLevel(firstParam);
                     }
                 }
                 // This is to retrieve digits from first param when other methods didn't find algorithm matches

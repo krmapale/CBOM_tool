@@ -1,0 +1,271 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "metadata": {
+    "timestamp": "2024-07-31T12:35:46.751Z",
+    "component": {
+      "type": "application",
+      "name": "PQCBOM tool",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    [
+      {
+        "name": "aes192",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "192",
+            "classicalSecurityLevel": 192,
+            "nistQuantumSecurityLevel": 3
+          }
+        }
+      },
+      {
+        "name": "aes-256-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "mode": "cbc",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "aes-256-cbc",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "mode": "cbc",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 5
+          }
+        }
+      },
+      {
+        "name": "aes192",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "192",
+            "classicalSecurityLevel": 192,
+            "nistQuantumSecurityLevel": 3
+          }
+        }
+      },
+      {
+        "name": "sha256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 2
+          }
+        }
+      },
+      {
+        "name": "sha256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 2
+          }
+        }
+      },
+      {
+        "name": "SHA256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 2
+          }
+        }
+      },
+      {
+        "name": "SHA256",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256,
+            "nistQuantumSecurityLevel": 2
+          }
+        }
+      },
+      {
+        "name": "DH-2048",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "modp14",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "modp14",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "secp256k1",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      },
+      {
+        "name": "hmac",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      },
+      {
+        "name": "rsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "rsa",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "2048",
+            "classicalSecurityLevel": 2048,
+            "nistQuantumSecurityLevel": 0
+          }
+        }
+      },
+      {
+        "name": "hmac",
+        "type": "cryptographic-asset",
+        "properties": {
+          "name": "SrcFile",
+          "value": "/home/kurisu/PQC/cyclonedx_pqc/testing/testdirs/javascript/cryptoExamples_by_ChatGPT.js"
+        },
+        "cryptoProperties": {
+          "assetType": "algorithm",
+          "algorithmProperties": {
+            "parameterSetIdentifier": "256",
+            "classicalSecurityLevel": 256
+          }
+        }
+      }
+    ]
+  ]
+}
